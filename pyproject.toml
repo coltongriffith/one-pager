@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onepager"
+version = "0.1.0"
+description = "Generate beautifully designed investor one-pager PDFs from a company profile JSON"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "weasyprint>=60",
+    "jinja2>=3.1",
+    "pillow>=10.0",
+]
+
+[project.scripts]
+onepager = "onepager.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["onepager*"]
+
+[tool.setuptools.package-data]
+onepager = ["templates/**/*.html", "fonts/*.ttf"]

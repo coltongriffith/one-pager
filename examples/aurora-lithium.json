@@ -1,0 +1,98 @@
+{
+  "company": {
+    "name": "Aurora Lithium Corp.",
+    "tagline": "Powering the Battery Supply Chain of Tomorrow",
+    "description": "is a TSX Venture listed exploration and development company advancing a portfolio of lithium brine projects across the Lithium Triangle of South America. The company combines district-scale land positions with a disciplined, drill-driven exploration strategy targeting near-term resource definition.",
+    "sector": "Lithium Exploration & Development",
+    "website": "www.auroralithium.com",
+    "email": "ir@auroralithium.com",
+    "phone": "+1 (604) 555-0148",
+    "address": "Vancouver, BC, Canada",
+    "logo": "assets/aurora-logo.svg",
+    "hero_image": "assets/aurora-hero.svg"
+  },
+  "listings": [
+    { "exchange": "TSXV", "ticker": "AUL" },
+    { "exchange": "OTCQB", "ticker": "AULCF" },
+    { "exchange": "FSE", "ticker": "4A1" }
+  ],
+  "share_structure": {
+    "as_of": "May 2026",
+    "share_price": 0.62,
+    "shares_outstanding": 92450000,
+    "options": 6150000,
+    "warrants": 14200000,
+    "week52_range": "$0.31 – $0.88",
+    "cash_position": 11400000,
+    "insider_ownership": "21%"
+  },
+  "highlights": [
+    {
+      "icon": "battery",
+      "title": "Critical Commodity",
+      "text": "Lithium demand is forecast to triple by 2035, driven by EV adoption and grid-scale storage buildout."
+    },
+    {
+      "icon": "map",
+      "title": "District Scale",
+      "text": "Over 48,000 hectares across two salars in the Lithium Triangle, host to more than half of global lithium resources."
+    },
+    {
+      "icon": "drill",
+      "title": "Drill-Ready Targets",
+      "text": "Fully permitted 5,000 m drill program underway with first resource estimate targeted for Q1 2027."
+    },
+    {
+      "icon": "users",
+      "title": "Proven Team",
+      "text": "Leadership with multiple discoveries and exits in South American brine and hard-rock lithium projects."
+    },
+    {
+      "icon": "dollar",
+      "title": "Funded Through 2027",
+      "text": "$11.4M treasury fully funds current drill campaigns and maiden resource publication."
+    },
+    {
+      "icon": "leaf",
+      "title": "Low-Impact DLE",
+      "text": "Piloting direct lithium extraction to cut water consumption versus conventional evaporation ponds."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Salar Grande Project",
+      "location": "Salta Province, Argentina",
+      "summary": "Flagship brine project covering 31,000 ha in the heart of the Lithium Triangle.",
+      "bullets": [
+        "Historic sampling up to 540 mg/L lithium with low magnesium ratios",
+        "Phase 1 drilling intersected brine-bearing aquifers over 180 m thickness",
+        "Adjacent to producing operations with established infrastructure access"
+      ],
+      "image": "assets/aurora-map.svg"
+    },
+    {
+      "name": "Cerro Blanco Project",
+      "location": "Antofagasta Region, Chile",
+      "summary": "Earlier-stage 17,000 ha salar position with surface samples grading up to 380 mg/L lithium.",
+      "bullets": [
+        "Geophysics completed; maiden drill targets defined for H2 2026",
+        "Road-accessible, 40 km from rail and power corridor"
+      ]
+    }
+  ],
+  "team": [
+    { "name": "Elena Vásquez", "title": "President & CEO" },
+    { "name": "David Okafor", "title": "VP Exploration, P.Geo" },
+    { "name": "Marie Tremblay", "title": "Chief Financial Officer" },
+    { "name": "Jorge Mendoza", "title": "Country Manager, Argentina" }
+  ],
+  "news": [
+    { "date": "2026-05-12", "title": "Phase 1 drilling confirms thick brine horizons at Salar Grande" },
+    { "date": "2026-04-02", "title": "Closes $6.5M bought-deal financing led by institutional investors" },
+    { "date": "2026-02-18", "title": "DLE pilot study partnership signed with leading technology provider" }
+  ],
+  "brand": {
+    "primary": "#0E7C66",
+    "accent": "#E8A33D"
+  }
+}

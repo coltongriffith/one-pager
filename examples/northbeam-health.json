@@ -1,0 +1,76 @@
+{
+  "company": {
+    "name": "Northbeam Health Technologies Inc.",
+    "tagline": "AI-Driven Diagnostics, Delivered at Scale",
+    "description": "is a NASDAQ-listed digital health company commercializing an FDA-cleared AI imaging platform that helps radiologists detect cardiovascular and oncological conditions earlier. The platform is deployed across 240+ hospital networks with a recurring SaaS revenue model and 94% net revenue retention.",
+    "sector": "Healthcare Technology",
+    "website": "www.northbeamhealth.com",
+    "email": "investors@northbeamhealth.com",
+    "phone": "+1 (617) 555-0192",
+    "address": "Boston, MA, USA",
+    "logo": "assets/northbeam-logo.png"
+  },
+  "listings": [
+    { "exchange": "NASDAQ", "ticker": "NBHT" }
+  ],
+  "share_structure": {
+    "as_of": "Q1 2026",
+    "share_price": 14.20,
+    "shares_outstanding": 38600000,
+    "options": 2900000,
+    "week52_range": "$8.45 – $16.90",
+    "cash_position": 86000000,
+    "extra": [
+      { "label": "ARR", "value": "$112M" },
+      { "label": "Revenue Growth (YoY)", "value": "+41%" }
+    ]
+  },
+  "highlights": [
+    {
+      "icon": "growth",
+      "title": "Recurring Revenue",
+      "text": "$112M ARR growing 41% year-over-year with 94% net revenue retention across hospital networks."
+    },
+    {
+      "icon": "shield",
+      "title": "Regulatory Moat",
+      "text": "Seven FDA clearances and CE marking across cardiology and oncology imaging indications."
+    },
+    {
+      "icon": "network",
+      "title": "Embedded Distribution",
+      "text": "Integrated with the three largest PACS vendors, reaching 70% of US hospital imaging volume."
+    },
+    {
+      "icon": "dollar",
+      "title": "Strong Balance Sheet",
+      "text": "$86M in cash and no debt funds the path to profitability targeted for fiscal 2027."
+    }
+  ],
+  "projects": [
+    {
+      "name": "CardioSight Platform",
+      "location": "Commercial — 240+ networks",
+      "summary": "Flagship AI suite for early detection of coronary artery disease from routine CT scans.",
+      "bullets": [
+        "12.4M studies processed to date, doubling annually",
+        "Reimbursement codes secured in US and Germany",
+        "Average contract value up 28% year-over-year"
+      ]
+    },
+    {
+      "name": "OncoBeam (Pipeline)",
+      "location": "FDA submission H2 2026",
+      "summary": "Next-generation lung and breast screening module entering pivotal validation studies."
+    }
+  ],
+  "team": [
+    { "name": "Dr. Sarah Lindqvist", "title": "Co-Founder & CEO" },
+    { "name": "Rajan Mehta", "title": "Chief Financial Officer" },
+    { "name": "Dr. Tomás Herrera", "title": "Chief Medical Officer" }
+  ],
+  "news": [
+    { "date": "2026-05-20", "title": "Q1 revenue of $29.4M beats guidance; raises full-year outlook" },
+    { "date": "2026-03-11", "title": "CardioSight wins national rollout with leading European hospital group" }
+  ]
+}

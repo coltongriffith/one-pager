@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="120" viewBox="0 0 560 120">
+  <g>
+    <path d="M14 96 L52 22 L74 62 L88 38 L118 96 Z" fill="#0E7C66"/>
+    <path d="M52 22 L74 62 L62 84 L36 84 Z" fill="#15A385" opacity="0.85"/>
+    <circle cx="98" cy="26" r="10" fill="#E8A33D"/>
+  </g>
+  <text x="140" y="62" font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#0B3B32" letter-spacing="1">AURORA</text>
+  <text x="142" y="94" font-family="Georgia, serif" font-size="22" fill="#0E7C66" letter-spacing="8">LITHIUM CORP.</text>
+</svg>
