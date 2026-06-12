@@ -12,12 +12,13 @@ and it renders a polished A4 PDF using one of three built-in templates.
 
 ## Installation
 
-Requires Python 3.10+ and the WeasyPrint system libraries (Pango/Cairo — preinstalled
-on most Linux distros, `brew install pango` on macOS).
+The CLI and web app share one core install. Local PDF rendering uses WeasyPrint,
+which needs the Pango/Cairo system libraries (preinstalled on most Linux distros,
+`brew install pango` on macOS) — install it via the `pdf` extra:
 
 ```bash
-pip install -e .            # CLI only
-pip install -e ".[web]"     # CLI + browser UI
+pip install -e ".[pdf]"     # CLI + web UI + native PDF engine (recommended)
+pip install -e .            # core only; web UI works, PDF falls back to a browser printer
 # or just the dependencies:
 pip install -r requirements.txt
 ```
@@ -51,7 +52,7 @@ onepager build examples/northbeam-health.json --all -o output/
 ## Browser UI
 
 ```bash
-pip install -e ".[web]"
+pip install -e ".[pdf]"
 onepager serve              # → http://localhost:8000
 ```
 

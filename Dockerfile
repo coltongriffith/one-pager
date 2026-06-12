@@ -9,7 +9,7 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY onepager ./onepager
 COPY examples ./examples
-RUN pip install --no-cache-dir ".[web]"
+RUN pip install --no-cache-dir ".[pdf]"
 
 EXPOSE 8000
 CMD ["sh", "-c", "uvicorn onepager.web:app --host 0.0.0.0 --port ${PORT:-8000}"]

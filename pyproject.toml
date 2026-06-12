@@ -9,19 +9,22 @@ description = "Generate beautifully designed investor one-pager PDFs from a comp
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "weasyprint>=60",
+    # Templating, color extraction, and the web app + cap-table parsing.
+    # Installed on every target (including Vercel, which reads these).
     "jinja2>=3.1",
     "pillow>=10.0",
-]
-
-[project.optional-dependencies]
-web = [
     "fastapi>=0.110",
     "uvicorn>=0.27",
     "python-multipart>=0.0.9",
     "openpyxl>=3.1",
     "pypdf>=4.0",
 ]
+
+[project.optional-dependencies]
+# Native PDF engine for local/Docker rendering. Not installed on serverless
+# hosts (Vercel) where Pango/Cairo are unavailable; there the app falls back
+# to printing self-contained HTML via the api/pdf.js Chromium function.
+pdf = ["weasyprint>=60"]
 
 [project.scripts]
 onepager = "onepager.cli:main"
