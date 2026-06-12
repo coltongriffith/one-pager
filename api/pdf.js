@@ -40,7 +40,8 @@ module.exports = async (req, res) => {
     res.setHeader('Content-Disposition', 'inline; filename="onepager.pdf"');
     res.status(200).send(Buffer.from(pdf));
   } catch (err) {
-    res.status(500).json({ error: `PDF rendering failed: ${err.message}` });
+    const detail = (err.stack || String(err)).split('\n').slice(0, 4).join(' | ');
+    res.status(500).json({ error: `PDF rendering failed: ${detail}` });
   } finally {
     if (browser) await browser.close();
   }

@@ -458,7 +458,10 @@ async function generate() {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ html }),
       });
-      if (!printRes.ok) throw new Error(`PDF printing failed (${printRes.status})`);
+      if (!printRes.ok) {
+        const detail = await printRes.json().catch(() => ({}));
+        throw new Error(detail.error || `PDF printing failed (${printRes.status})`);
+      }
       blob = await printRes.blob();
     }
     const url = URL.createObjectURL(blob);
