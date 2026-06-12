@@ -22,6 +22,13 @@ TEMPLATES = {
     "stacked key statistics.",
 }
 
+# Standard print sizes. Letter is the North American conference-handout default.
+PAGE_SIZES = {
+    "letter": {"css": "Letter", "width": "215.9mm", "height": "279.4mm"},
+    "a4": {"css": "A4", "width": "210mm", "height": "297mm"},
+}
+DEFAULT_PAGE_SIZE = "letter"
+
 
 _FONT_FACES = [
     ("Inter", 400, "normal", "Inter-400.ttf"),
@@ -61,7 +68,12 @@ def _environment() -> Environment:
     return env
 
 
-def render_html(context: dict, template: str, inline_fonts: bool = False) -> str:
+def render_html(
+    context: dict,
+    template: str,
+    inline_fonts: bool = False,
+    page_size: str = DEFAULT_PAGE_SIZE,
+) -> str:
     """Render `context` with the named template to an HTML document.
 
     With `inline_fonts=True` the bundled fonts are embedded as data URIs so the
@@ -71,17 +83,28 @@ def render_html(context: dict, template: str, inline_fonts: bool = False) -> str
         raise ValueError(
             f"Unknown template '{template}'. Available: {', '.join(sorted(TEMPLATES))}"
         )
+    if page_size not in PAGE_SIZES:
+        raise ValueError(
+            f"Unknown page size '{page_size}'. Available: {', '.join(sorted(PAGE_SIZES))}"
+        )
     env = _environment()
     return env.get_template(f"{template}/page.html").render(
-        **context, font_faces=Markup(_font_face_css(inline=inline_fonts))
+        **context,
+        font_faces=Markup(_font_face_css(inline=inline_fonts)),
+        page=PAGE_SIZES[page_size],
     )
 
 
-def render_pdf(context: dict, template: str, output_path: str | Path) -> Path:
+def render_pdf(
+    context: dict,
+    template: str,
+    output_path: str | Path,
+    page_size: str = DEFAULT_PAGE_SIZE,
+) -> Path:
     """Render `context` with the named template and write a PDF."""
     from weasyprint import HTML
 
-    html_source = render_html(context, template)
+    html_source = render_html(context, template, page_size=page_size)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     HTML(string=html_source, base_url=str(TEMPLATES_DIR)).write_pdf(str(output_path))

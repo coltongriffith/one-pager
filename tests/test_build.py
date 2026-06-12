@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from onepager.profile import ProfileError, load_profile
-from onepager.render import TEMPLATES, render_pdf
+from onepager.render import PAGE_SIZES, TEMPLATES, render_pdf
 
 ROOT = Path(__file__).parent.parent
 EXAMPLES = sorted(ROOT.glob("examples/*.json"))
@@ -13,9 +13,15 @@ EXAMPLES = sorted(ROOT.glob("examples/*.json"))
 
 @pytest.mark.parametrize("profile_path", EXAMPLES, ids=lambda p: p.stem)
 @pytest.mark.parametrize("template", sorted(TEMPLATES))
-def test_examples_render_one_page(profile_path, template, tmp_path):
+@pytest.mark.parametrize("page_size", sorted(PAGE_SIZES))
+def test_examples_render_one_page(profile_path, template, page_size, tmp_path):
     context = load_profile(profile_path)
-    out = render_pdf(context, template, tmp_path / f"{profile_path.stem}-{template}.pdf")
+    out = render_pdf(
+        context,
+        template,
+        tmp_path / f"{profile_path.stem}-{template}-{page_size}.pdf",
+        page_size=page_size,
+    )
     data = out.read_bytes()
     assert data.startswith(b"%PDF")
     assert data.count(b"/Type /Page\n") + data.count(b"/Type /Page>") <= 2

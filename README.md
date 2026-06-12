@@ -35,6 +35,9 @@ onepager build my-company.json --template summit -o my-company.pdf
 # Render all three templates at once
 onepager build my-company.json --all -o output/
 
+# Pick a print size: US Letter (default) or A4
+onepager build my-company.json -t summit --page-size a4
+
 # List templates and available highlight icons
 onepager templates --icons
 ```
@@ -69,7 +72,7 @@ The web UI is a guided, single-page builder — no JSON required:
    left blank.
 4. **Why should investors care?** Highlights, projects, leadership, and news as
    simple one-line entries.
-5. Pick a template, generate, preview in the page, download the PDF.
+5. Pick a template and a print size — US Letter (8.5 × 11 in, the conference-handout standard) or A4 — then generate, preview, and download.
 
 One-click example loading fills the whole form, and a **JSON (advanced)** tab gives
 full programmatic control over the profile (including a "copy form into JSON"
@@ -174,7 +177,7 @@ the `icon` field.
 
 ## Fitting on one page
 
-These are fixed, single-page layouts; content is curated, not paginated. Guidelines
+Output is a single page at standard print size — US Letter by default, A4 via `--page-size a4` — so companies can print copies for conferences and investor meetings. Content is curated, not paginated. Guidelines
 that render well:
 
 - **Highlights:** up to 6 (`horizon` shows the first 3 as feature cards).

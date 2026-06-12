@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .icons import available_icons
 from .profile import ProfileError, load_profile
-from .render import TEMPLATES, render_pdf
+from .render import DEFAULT_PAGE_SIZE, PAGE_SIZES, TEMPLATES, render_pdf
 
 STARTER_PROFILE = {
     "company": {
@@ -84,6 +84,13 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Render the profile with every template",
     )
+    build.add_argument(
+        "-p",
+        "--page-size",
+        default=DEFAULT_PAGE_SIZE,
+        choices=sorted(PAGE_SIZES),
+        help=f"Page size for printing (default: {DEFAULT_PAGE_SIZE})",
+    )
 
     list_parser = sub.add_parser("templates", help="List available templates")
     list_parser.add_argument(
@@ -142,7 +149,7 @@ def main(argv: list[str] | None = None) -> int:
             out = out_dir / f"{stem}-{template}.pdf"
         else:
             out = Path(args.output) if args.output else Path(f"{stem}-{template}.pdf")
-        result = render_pdf(context, template, out)
+        result = render_pdf(context, template, out, page_size=args.page_size)
         print(f"Wrote {result}")
     return 0
 

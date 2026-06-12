@@ -20,7 +20,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from .captable import parse_captable, parse_text
 from .profile import ProfileError, load_profile
-from .render import TEMPLATES, render_html, render_pdf
+from .render import DEFAULT_PAGE_SIZE, PAGE_SIZES, TEMPLATES, render_html, render_pdf
 
 
 @lru_cache(maxsize=1)
@@ -177,6 +177,10 @@ PAGE = """<!DOCTYPE html>
         <div><label class="small">Hero image <small>— optional banner photo (used by the horizon template)</small></label><input type="file" id="hero" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
       </div>
       <div class="grid2">
+        <div><label class="small">Project / product photo #1 <small>— shown with your first project</small></label><input type="file" id="photo1" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
+        <div><label class="small">Project / product photo #2 <small>— shown with your second project</small></label><input type="file" id="photo2" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
+      </div>
+      <div class="grid2">
         <div><label class="small">Brand color <small>— leave blank to auto-extract from a PNG/JPG logo</small></label><input type="text" id="b_primary" placeholder="#0E7C66"></div>
         <div><label class="small">Accent color <small>— optional second color</small></label><input type="text" id="b_accent" placeholder="#E8A33D"></div>
       </div>
@@ -237,8 +241,12 @@ PAGE = """<!DOCTYPE html>
       <textarea id="profile_json" rows="28" class="mono" spellcheck="false"></textarea>
     </div>
 
-    <h2>5 · Template</h2>
+    <h2>5 · Template &amp; page size</h2>
     <div class="tpl" id="templates"></div>
+    <div class="tpl" style="margin-top:8px">
+      <label><input type="radio" name="psize" value="letter" checked>US Letter (8.5 &times; 11 in)</label>
+      <label><input type="radio" name="psize" value="a4">A4 (international)</label>
+    </div>
 
     <button class="generate" id="go" onclick="generate()">Generate PDF</button>
     <div id="error"></div>
@@ -440,10 +448,15 @@ async function generate() {
     const form = new FormData();
     form.append('profile', profileText);
     form.append('template', document.querySelector('input[name=tpl]:checked').value);
+    form.append('page_size', document.querySelector('input[name=psize]:checked').value);
     const logo = document.getElementById('logo').files[0];
     const hero = document.getElementById('hero').files[0];
     if (logo) form.append('logo', logo);
     if (hero) form.append('hero', hero);
+    const photo1 = document.getElementById('photo1').files[0];
+    const photo2 = document.getElementById('photo2').files[0];
+    if (photo1) form.append('photo1', photo1);
+    if (photo2) form.append('photo2', photo2);
     const res = await fetch('/generate', { method: 'POST', body: form });
     if (!res.ok) {
       const detail = await res.json().catch(() => ({}));
@@ -565,11 +578,16 @@ def _save_upload(upload: UploadFile, directory: Path, stem: str) -> str | None:
 def generate(
     profile: str = Form(...),
     template: str = Form("boardroom"),
+    page_size: str = Form(DEFAULT_PAGE_SIZE),
     logo: UploadFile | None = File(None),
     hero: UploadFile | None = File(None),
+    photo1: UploadFile | None = File(None),
+    photo2: UploadFile | None = File(None),
 ) -> Response:
     if template not in TEMPLATES:
         return JSONResponse({"error": f"Unknown template '{template}'"}, status_code=400)
+    if page_size not in PAGE_SIZES:
+        return JSONResponse({"error": f"Unknown page size '{page_size}'"}, status_code=400)
     try:
         data = json.loads(profile)
     except json.JSONDecodeError as exc:
@@ -594,6 +612,20 @@ def generate(
                     {"error": "Unsupported or oversized hero image"}, status_code=400
                 )
             company["hero_image"] = saved
+        projects = data.get("projects") or []
+        for i, photo in enumerate((photo1, photo2)):
+            if photo is None or not photo.filename:
+                continue
+            saved = _save_upload(photo, tmp_path, f"photo{i + 1}")
+            if saved is None:
+                return JSONResponse(
+                    {"error": f"Unsupported or oversized photo #{i + 1}"}, status_code=400
+                )
+            if i < len(projects):
+                projects[i]["image"] = saved
+            elif not company.get("hero_image"):
+                # no matching project: use the photo as the hero/banner image
+                company["hero_image"] = saved
 
         profile_path = tmp_path / "profile.json"
         profile_path.write_text(json.dumps(data))
@@ -601,9 +633,13 @@ def generate(
         try:
             context = load_profile(profile_path, inline_assets=not use_weasyprint)
             if use_weasyprint:
-                pdf_path = render_pdf(context, template, tmp_path / "out.pdf")
+                pdf_path = render_pdf(
+                    context, template, tmp_path / "out.pdf", page_size=page_size
+                )
             else:
-                html = render_html(context, template, inline_fonts=True)
+                html = render_html(
+                    context, template, inline_fonts=True, page_size=page_size
+                )
         except (ProfileError, ValueError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         company_name = (company.get("name") or "onepager").strip().replace(" ", "-")
