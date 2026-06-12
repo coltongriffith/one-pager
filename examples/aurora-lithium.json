@@ -2,9 +2,13 @@
   "company": {
     "name": "Aurora Lithium Corp.",
     "tagline": "Powering the Battery Supply Chain of Tomorrow",
-    "description": "is a TSX Venture listed exploration and development company advancing a portfolio of lithium brine projects across the Lithium Triangle of South America. The company combines district-scale land positions with a disciplined, drill-driven exploration strategy targeting near-term resource definition.",
+    "commodity": "Lithium brine exploration",
+    "jurisdiction": "Argentina & Chile",
+    "stage": "Drill-stage exploration",
+    "description": "is advancing lithium brine projects across Argentina and Chile, with a 48,000 ha portfolio, $11.4M treasury, and a fully permitted 5,000 m drill program targeting a maiden resource in Q1 2027.",
     "sector": "Lithium Exploration & Development",
     "website": "www.auroralithium.com",
+    "deck_url": "www.auroralithium.com/investors/presentation",
     "email": "ir@auroralithium.com",
     "phone": "+1 (604) 555-0148",
     "address": "Vancouver, BC, Canada",
@@ -16,16 +20,37 @@
     { "exchange": "OTCQB", "ticker": "AULCF" },
     { "exchange": "FSE", "ticker": "4A1" }
   ],
+  "key_metrics": [
+    { "label": "Land Position", "value": "48,000 ha" },
+    { "label": "Treasury", "value": "$11.4M" },
+    { "label": "Next Catalyst", "value": "Phase 1 results · Q3 2026" }
+  ],
   "share_structure": {
-    "as_of": "May 2026",
+    "as_of": "May 31, 2026",
+    "currency": "CAD",
+    "source": "Company filings / TMX",
     "share_price": 0.62,
     "shares_outstanding": 92450000,
     "options": 6150000,
     "warrants": 14200000,
+    "debt": 0,
     "week52_range": "$0.31 – $0.88",
     "cash_position": 11400000,
     "insider_ownership": "21%"
   },
+  "catalysts": [
+    { "timing": "Q3 2026", "catalyst": "Phase 1 drill results at Salar Grande" },
+    { "timing": "H2 2026", "catalyst": "Maiden drill targets defined at Cerro Blanco" },
+    { "timing": "Q1 2027", "catalyst": "Maiden mineral resource estimate" },
+    { "timing": "2027", "catalyst": "DLE pilot results & development planning" }
+  ],
+  "why_now": [
+    "Fully funded 5,000 m drill program underway",
+    "First resource estimate targeted for Q1 2027",
+    "48,000 ha lithium brine portfolio in Argentina and Chile",
+    "$11.4M treasury supports the current work program",
+    "Multiple near-term technical catalysts"
+  ],
   "highlights": [
     {
       "icon": "battery",
@@ -34,34 +59,38 @@
     },
     {
       "icon": "map",
-      "title": "District Scale",
-      "text": "Over 48,000 hectares across two salars in the Lithium Triangle, host to more than half of global lithium resources."
+      "title": "48,000 ha Portfolio",
+      "text": "Two salar projects across Argentina and Chile, including the 31,000 ha Salar Grande flagship."
     },
     {
       "icon": "drill",
-      "title": "Drill-Ready Targets",
-      "text": "Fully permitted 5,000 m drill program underway with first resource estimate targeted for Q1 2027."
+      "title": "5,000 m Drilling Underway",
+      "text": "Fully permitted program with a maiden resource estimate targeted for Q1 2027."
     },
     {
       "icon": "users",
-      "title": "Proven Team",
-      "text": "Leadership with multiple discoveries and exits in South American brine and hard-rock lithium projects."
+      "title": "Experienced Team",
+      "text": "Led by South American lithium operators with 4 prior brine discoveries, financings, and exits."
     },
     {
       "icon": "dollar",
-      "title": "Funded Through 2027",
-      "text": "$11.4M treasury fully funds current drill campaigns and maiden resource publication."
+      "title": "$11.4M Treasury",
+      "text": "Fully funds the current drill campaign and the maiden resource estimate through 2027."
     },
     {
       "icon": "leaf",
-      "title": "Low-Impact DLE",
-      "text": "Piloting direct lithium extraction to cut water consumption versus conventional evaporation ponds."
+      "title": "40% Lower Water Use",
+      "text": "Piloting direct lithium extraction (DLE) versus conventional evaporation ponds."
     }
   ],
   "projects": [
     {
       "name": "Salar Grande Project",
       "location": "Salta Province, Argentina",
+      "size": "31,000 ha",
+      "stage": "Flagship / drilling",
+      "ownership": "100%",
+      "key_point": "Brine aquifers over 180 m thickness; historic sampling up to 540 mg/L Li",
       "summary": "Flagship brine project covering 31,000 ha in the heart of the Lithium Triangle.",
       "bullets": [
         "Historic sampling up to 540 mg/L lithium with low magnesium ratios",
@@ -73,6 +102,10 @@
     {
       "name": "Cerro Blanco Project",
       "location": "Antofagasta Region, Chile",
+      "size": "17,000 ha",
+      "stage": "Earlier-stage",
+      "ownership": "100%",
+      "key_point": "Surface samples grading up to 380 mg/L lithium; maiden targets H2 2026",
       "summary": "Earlier-stage 17,000 ha salar position with surface samples grading up to 380 mg/L lithium.",
       "bullets": [
         "Geophysics completed; maiden drill targets defined for H2 2026",
@@ -81,10 +114,10 @@
     }
   ],
   "team": [
-    { "name": "Elena Vásquez", "title": "President & CEO" },
-    { "name": "David Okafor", "title": "VP Exploration, P.Geo" },
-    { "name": "Marie Tremblay", "title": "Chief Financial Officer" },
-    { "name": "Jorge Mendoza", "title": "Country Manager, Argentina" }
+    { "name": "Elena Vásquez", "title": "President & CEO", "note": "20+ years in South American lithium development" },
+    { "name": "David Okafor", "title": "VP Exploration, P.Geo", "note": "Led 2 prior brine discoveries in the Lithium Triangle" },
+    { "name": "Marie Tremblay", "title": "Chief Financial Officer", "note": "Raised $300M+ for junior resource companies" },
+    { "name": "Jorge Mendoza", "title": "Country Manager, Argentina", "note": "Former operator at a producing Salta brine project" }
   ],
   "news": [
     { "date": "2026-05-12", "title": "Phase 1 drilling confirms thick brine horizons at Salar Grande" },

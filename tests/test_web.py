@@ -34,7 +34,7 @@ def test_example_unknown_404():
 
 def test_generate_pdf():
     profile = json.dumps({"company": {"name": "Web Test Corp."}})
-    res = client.post("/generate", data={"profile": profile, "template": "summit"})
+    res = client.post("/generate", data={"profile": profile, "template": "catalyst"})
     assert res.status_code == 200
     assert res.headers["content-type"] == "application/pdf"
     assert res.content.startswith(b"%PDF")
@@ -45,7 +45,7 @@ def test_generate_with_logo_upload():
     logo = (ROOT / "examples/assets/northbeam-logo.png").read_bytes()
     res = client.post(
         "/generate",
-        data={"profile": profile, "template": "boardroom"},
+        data={"profile": profile, "template": "factsheet"},
         files={"logo": ("logo.png", logo, "image/png")},
     )
     assert res.status_code == 200
@@ -75,10 +75,10 @@ def test_generate_html_fallback(monkeypatch):
     web.weasyprint_available.cache_clear()
     try:
         profile = json.dumps({"company": {"name": "Serverless Corp."}})
-        res = client.post("/generate", data={"profile": profile, "template": "summit"})
+        res = client.post("/generate", data={"profile": profile, "template": "catalyst"})
         assert res.status_code == 200
         body = res.json()
-        assert body["filename"] == "Serverless-Corp.-summit.pdf"
+        assert body["filename"] == "Serverless-Corp.-catalyst.pdf"
         assert "<!DOCTYPE html>" in body["html"]
         assert "data:font/ttf;base64," in body["html"]
     finally:
@@ -86,11 +86,11 @@ def test_generate_html_fallback(monkeypatch):
 
 
 def test_generate_rejects_bad_input():
-    assert client.post("/generate", data={"profile": "{bad", "template": "summit"}).status_code == 400
+    assert client.post("/generate", data={"profile": "{bad", "template": "catalyst"}).status_code == 400
     assert client.post("/generate", data={"profile": "{}", "template": "nope"}).status_code == 400
     res = client.post(
         "/generate",
-        data={"profile": '{"company": {"name": "X"}}', "template": "summit"},
+        data={"profile": '{"company": {"name": "X"}}', "template": "catalyst"},
         files={"logo": ("evil.exe", b"MZ", "application/octet-stream")},
     )
     assert res.status_code == 400

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+{{ font_faces }}
+{% set compact = page.css == 'Letter' %}
+{% set hero = company.hero_image or (projects[0].image if projects and projects[0].image else None) %}
+
+@page { size: {{ page.css }}; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: {{ palette.ink }};
+  font-size: 9pt;
+  line-height: 1.45;
+}
+
+.page {
+  width: {{ page.width }};
+  height: {{ page.height }};
+  display: flex;
+  flex-direction: column;
+  background: {{ palette.paper }};
+}
+
+/* ---------- header ---------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: {{ '5mm 12mm 3mm' if compact else '7mm 12mm 4mm' }};
+}
+.header .id-block { min-width: 0; }
+.header img.logo { max-height: 16mm; max-width: 78mm; }
+.header .company-name {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 20pt; font-weight: 700; color: {{ palette.primary }}; letter-spacing: -0.5pt;
+}
+.header .subhead {
+  font-size: 8.6pt; font-weight: 600; color: {{ palette.muted }};
+  letter-spacing: 0.3pt; margin-top: 1.6mm;
+}
+.tickers {
+  background: {{ palette.primary }};
+  color: {{ palette.on_primary }};
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 10pt;
+  letter-spacing: 0.6pt;
+  padding: 2.6mm 5.5mm;
+  border-left: 1.6mm solid {{ palette.accent }};
+  white-space: nowrap;
+}
+
+.tagline-band {
+  background: linear-gradient(90deg, {{ palette.primary_deep }}, {{ palette.primary }});
+  color: {{ palette.on_primary }};
+  text-align: center;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 12.5pt;
+  font-weight: 500;
+  letter-spacing: 0.4pt;
+  padding: 3mm 10mm;
+}
+
+/* ---------- 3-metric strip ---------- */
+.metric-strip { display: table; table-layout: fixed; width: 100%; background: {{ palette.primary_mist }}; }
+.metric { display: table-cell; text-align: center; padding: {{ '3mm 4mm' if compact else '3.6mm 4mm' }}; border-right: 0.3mm solid {{ palette.line }}; }
+.metric:last-child { border-right: none; }
+.metric .mv {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: {{ '14pt' if compact else '15pt' }}; font-weight: 700; color: {{ palette.primary }};
+  line-height: 1.1;
+}
+.metric .ml {
+  font-size: 7pt; font-weight: 700; letter-spacing: 0.8pt; text-transform: uppercase;
+  color: {{ palette.muted }}; margin-top: 1.4mm;
+}
+
+/* ---------- body ---------- */
+.body {
+  flex: 1;
+  padding: {{ '4.5mm 12mm 3mm' if compact else '6mm 12mm 4mm' }};
+  min-height: 0;
+  overflow: hidden;
+}
+.body-table { display: table; table-layout: fixed; width: 100%; }
+.col-left { display: table-cell; width: 35%; vertical-align: top; padding-right: 7mm; }
+.col-left > * { margin-bottom: {{ '4mm' if compact else '5mm' }}; }
+.col-right { display: table-cell; vertical-align: top; }
+
+.hero-photo {
+  width: 100%; height: {{ '30mm' if compact else '36mm' }};
+  object-fit: cover;
+  border-radius: 2.5mm;
+  display: block;
+}
+
+.panel {
+  background: {{ palette.primary_deep }};
+  color: {{ palette.on_primary }};
+  border-radius: 2.5mm;
+  padding: 4.5mm 5mm;
+}
+.panel h3 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 11pt;
+  font-weight: 700;
+  letter-spacing: 0.3pt;
+  margin-bottom: 3mm;
+  padding-bottom: 2.2mm;
+  border-bottom: 0.5mm solid {{ palette.accent }};
+}
+.panel table { width: 100%; border-collapse: collapse; }
+.panel td { padding: {{ '1.4mm 0' if compact else '1.7mm 0' }}; font-size: 8.6pt; border-bottom: 0.2mm solid rgba(255,255,255,0.14); }
+.panel tr:last-child td { border-bottom: none; }
+.panel td.label { opacity: 0.82; }
+.panel td.value { text-align: right; font-weight: 600; }
+.panel .meta { font-size: 6.8pt; opacity: 0.7; margin-top: 2.6mm; line-height: 1.5; }
+.panel .qr-row { display: flex; align-items: center; gap: 3mm; margin-top: 3.4mm; padding-top: 3.4mm; border-top: 0.2mm solid rgba(255,255,255,0.16); }
+.panel .qr-row img { width: 16mm; height: 16mm; background: #fff; padding: 1mm; border-radius: 1.4mm; }
+.panel .qr-row .qr-cap { font-size: 7pt; line-height: 1.4; opacity: 0.85; }
+.panel .qr-row .qr-cap strong { display: block; font-size: 7.6pt; opacity: 1; }
+
+.contact { display: flex; flex-direction: column; gap: {{ '2mm' if compact else '2.4mm' }}; }
+.contact .row { display: flex; align-items: center; gap: 3mm; font-size: 8.6pt; font-weight: 500; }
+.contact .row .ic {
+  width: 7mm; height: 7mm; flex: 0 0 7mm;
+  border-radius: 50%;
+  background: {{ palette.primary }};
+  color: {{ palette.on_primary }};
+  display: flex; align-items: center; justify-content: center;
+}
+.contact .row .ic svg { width: 4mm; height: 4mm; }
+
+/* ---------- right column ---------- */
+.about { font-size: {{ '9pt' if compact else '9.4pt' }}; line-height: 1.5; color: {{ palette.ink }}; margin-bottom: {{ '4mm' if compact else '5mm' }}; }
+.about strong { color: {{ palette.primary }}; }
+
+h2.section {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 12pt;
+  font-weight: 700;
+  color: {{ palette.primary }};
+  letter-spacing: 0.5pt;
+  text-transform: uppercase;
+  margin-bottom: 3mm;
+  padding-bottom: 1.6mm;
+  border-bottom: 0.6mm solid {{ palette.accent }};
+}
+
+.highlights { display: flex; flex-wrap: wrap; gap: 3mm; margin-bottom: {{ '4mm' if compact else '5mm' }}; }
+.tile {
+  width: calc((100% - 6mm) / 3);
+  border-radius: 2mm;
+  padding: 3.2mm 3.4mm;
+  color: {{ palette.on_primary }};
+}
+.tile:nth-child(3n+1) { background: {{ palette.primary }}; }
+.tile:nth-child(3n+2) { background: {{ palette.primary_dark }}; }
+.tile:nth-child(3n+3) { background: {{ palette.accent_dark }}; }
+.tile .t-head { display: flex; align-items: center; gap: 2.2mm; margin-bottom: 1.6mm; }
+.tile svg { width: 4.6mm; height: 4.6mm; flex: 0 0 auto; }
+.tile h5 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 8.4pt; font-weight: 700; letter-spacing: 0.2pt; text-transform: uppercase;
+}
+.tile p { font-size: 7.4pt; line-height: 1.38; opacity: 0.92; }
+
+.project { margin-bottom: 2.8mm; padding-left: 3mm; border-left: 1mm solid {{ palette.accent }}; }
+.project .proj-head { display: flex; align-items: baseline; gap: 2.6mm; flex-wrap: wrap; }
+.project h4 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 9.6pt; font-weight: 700; color: {{ palette.ink }};
+}
+.project .loc { font-size: 7.6pt; color: {{ palette.muted }}; font-weight: 500; }
+.project .tag {
+  font-size: 6.8pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3pt;
+  color: {{ palette.primary }}; background: {{ palette.primary_mist }};
+  padding: 0.4mm 1.8mm; border-radius: 1mm;
+}
+.project p { font-size: 8.2pt; line-height: 1.4; margin-top: 0.8mm; color: {{ palette.ink }}; }
+
+.subgrid { display: table; table-layout: fixed; width: 100%; margin-top: 1mm; }
+.subcol { display: table-cell; width: 50%; vertical-align: top; }
+.subcol.first { padding-right: 5mm; }
+.subcol h3 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 9.5pt; font-weight: 700; color: {{ palette.primary }};
+  text-transform: uppercase; letter-spacing: 0.4pt;
+  margin-bottom: 2mm; padding-bottom: 1.2mm;
+  border-bottom: 0.4mm solid {{ palette.line }};
+}
+.member { font-size: 8pt; margin-bottom: 1.6mm; }
+.member .m-name { font-weight: 700; }
+.member .m-title { color: {{ palette.muted }}; }
+.member .m-note { display: block; font-size: 7.2pt; color: {{ palette.muted }}; font-style: italic; }
+.cat-item { display: flex; gap: 2.6mm; font-size: 8pt; margin-bottom: 1.5mm; }
+.cat-item .when { color: {{ palette.accent_dark }}; font-weight: 700; white-space: nowrap; min-width: 15mm; }
+
+/* ---------- footer ---------- */
+.footer {
+  padding: 2.6mm 12mm 3.4mm;
+  border-top: 0.3mm solid {{ palette.line }};
+  display: flex;
+  gap: 8mm;
+  align-items: center;
+}
+.footer .disclaimer { flex: 1; font-size: 6pt; color: {{ palette.muted }}; line-height: 1.4; }
+.footer .site {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 700; font-size: 9pt; color: {{ palette.primary }}; white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="id-block">
+      {% if company.logo %}
+        <img class="logo" src="{{ company.logo }}">
+      {% else %}
+        <div class="company-name">{{ company.name }}</div>
+      {% endif %}
+      {% if company.subhead %}<div class="subhead">{{ company.subhead }}</div>{% endif %}
+    </div>
+    {% if ticker_line %}<div class="tickers">{{ ticker_line }}</div>{% endif %}
+  </div>
+
+  {% if company.tagline %}<div class="tagline-band">{{ company.tagline }}</div>{% endif %}
+
+  {% if key_metrics %}
+  <div class="metric-strip">
+    {% for m in key_metrics[:3] %}
+    <div class="metric"><div class="mv">{{ m.value }}</div><div class="ml">{{ m.label }}</div></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="body">
+    <div class="body-table">
+    <div class="col-left">
+      {% if hero %}<img class="hero-photo" src="{{ hero }}">{% endif %}
+
+      {% if priority_share_rows %}
+      <div class="panel">
+        <h3>Capital Structure</h3>
+        <table>
+          {% for row in priority_share_rows %}
+          <tr><td class="label">{{ row.label }}</td><td class="value">{{ row.value }}</td></tr>
+          {% endfor %}
+        </table>
+        {% if market_meta.currency or market_meta.as_of or market_meta.source %}
+        <div class="meta">
+          {% if market_meta.currency %}All figures in {{ market_meta.currency }}.{% endif %}
+          {% if market_meta.as_of %} As of {{ market_meta.as_of }}.{% endif %}
+          {% if market_meta.source %} Source: {{ market_meta.source }}.{% endif %}
+        </div>
+        {% endif %}
+        {% if company.qr %}
+        <div class="qr-row">
+          <img src="{{ company.qr }}">
+          <div class="qr-cap"><strong>Scan for the investor deck</strong>{{ company.qr_url }}</div>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div class="contact">
+        {% if company.phone %}
+        <div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>{{ company.phone }}</div>
+        {% endif %}
+        {% if company.email %}
+        <div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>{{ company.email }}</div>
+        {% endif %}
+        {% if company.website %}
+        <div class="row"><span class="ic">{{ 'globe'|icon }}</span>{{ company.website }}</div>
+        {% endif %}
+        {% if company.address %}
+        <div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.8-7-11a7 7 0 0 1 14 0c0 5.2-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>{{ company.address }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-right">
+      {% if company.description %}
+        <div class="about"><strong>{{ company.name }}</strong> {{ company.description }}</div>
+      {% endif %}
+
+      {% if highlights %}
+      <h2 class="section">Investment Highlights</h2>
+      <div class="highlights">
+        {% for h in highlights %}
+        <div class="tile">
+          <div class="t-head">{{ h.icon|icon }}<h5>{{ h.title }}</h5></div>
+          <p>{{ h.text }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if projects %}
+      <h2 class="section">Projects</h2>
+      {% for project in projects %}
+      <div class="project">
+        <div class="proj-head">
+          <h4>{{ project.name }}</h4>
+          {% if project.location %}<span class="loc">{{ project.location }}</span>{% endif %}
+          {% if project.stage %}<span class="tag">{{ project.stage }}</span>{% endif %}
+        </div>
+        {% if project.key_point %}<p>{{ project.key_point }}</p>
+        {% elif project.summary %}<p>{{ project.summary }}</p>{% endif %}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      {% if team or catalysts or news %}
+      <div class="subgrid">
+        {% if team %}<div class="subcol first">
+          <h3>Leadership</h3>
+          {% for member in team %}
+          <div class="member"><span class="m-name">{{ member.name }}</span> &mdash; <span class="m-title">{{ member.title }}</span>{% if member.note %}<span class="m-note">{{ member.note }}</span>{% endif %}</div>
+          {% endfor %}
+        </div>{% endif %}<div class="subcol">
+          {% if catalysts %}
+          <h3>Upcoming Catalysts</h3>
+          {% for c in catalysts[:5] %}
+          <div class="cat-item"><span class="when">{{ c.timing }}</span><span>{{ c.catalyst }}</span></div>
+          {% endfor %}
+          {% elif news %}
+          <h3>Recent News</h3>
+          {% for item in news[:4] %}
+          <div class="cat-item"><span class="when">{{ item.date }}</span><span>{{ item.title }}</span></div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="disclaimer">{{ disclaimer }}</div>
+    {% if company.website %}<div class="site">{{ company.website }}</div>{% endif %}
+  </div>
+
+</div>
+</body>
+</html>

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .icons import available_icons
 from .profile import ProfileError, load_profile
-from .render import DEFAULT_PAGE_SIZE, PAGE_SIZES, TEMPLATES, render_pdf
+from .render import DEFAULT_PAGE_SIZE, DEFAULT_TEMPLATE, PAGE_SIZES, TEMPLATES, render_pdf
 
 STARTER_PROFILE = {
     "company": {
@@ -69,9 +69,9 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument(
         "-t",
         "--template",
-        default="boardroom",
+        default=DEFAULT_TEMPLATE,
         choices=sorted(TEMPLATES),
-        help="Template to use (default: boardroom)",
+        help=f"Template to use (default: {DEFAULT_TEMPLATE})",
     )
     build.add_argument(
         "-o",

@@ -14,13 +14,18 @@ TEMPLATES_DIR = PACKAGE_DIR / "templates"
 FONTS_DIR = PACKAGE_DIR / "fonts"
 
 TEMPLATES = {
-    "boardroom": "Structured two-column corporate layout with a dark stats panel "
-    "and an investment-highlights grid.",
-    "horizon": "Hero-image layout with centered branding, icon feature cards, "
-    "and a share-information table.",
-    "summit": "Modern full-height brand sidebar with large display type and "
-    "stacked key statistics.",
+    "factsheet": "Corporate snapshot / investor factsheet: logo, ticker, "
+    "commodity & jurisdiction, a 3-metric headline strip, hero visual, "
+    "capital-markets sidebar (with enterprise value and a QR code), "
+    "evidence-based highlights, projects, leadership, and catalysts.",
+    "asset": "Project / asset-focused: leads with the flagship asset and a "
+    "large visual, a comparable-projects table, and project stats.",
+    "catalyst": "Catalyst / conference handout: tight headline, 'Why Now' "
+    "reasons, an upcoming-catalyst timeline, capital structure, leadership, "
+    "and a scannable QR code.",
 }
+
+DEFAULT_TEMPLATE = "factsheet"
 
 # Standard print sizes. Letter is the North American conference-handout default.
 PAGE_SIZES = {

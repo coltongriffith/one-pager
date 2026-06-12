@@ -81,10 +81,54 @@ def extract_brand_color(logo_path: Path) -> str | None:
     return rgb_to_hex(best) if best else None
 
 
-def build_palette(primary: str | None, accent: str | None, logo_path: Path | None) -> dict:
-    """Derive the full set of palette tokens used by every template."""
+# Commodity-specific default palettes (primary, accent). An explicitly supplied
+# brand color always wins; these only fill in when no brand color is given.
+COMMODITY_THEMES = {
+    "lithium": ("#0E7C66", "#E8A33D"),
+    "copper": ("#1C3B5A", "#C2703D"),
+    "gold": ("#1A1A1A", "#C8A24B"),
+    "silver": ("#33373B", "#8C9BA5"),
+    "uranium": ("#1F2A22", "#E6C200"),
+    "rare earth": ("#23306B", "#8E7CC3"),
+    "rare earths": ("#23306B", "#8E7CC3"),
+    "nickel": ("#2B4A4A", "#A9B7AE"),
+    "graphite": ("#2A2D34", "#6E7B8B"),
+    "oil": ("#1B2430", "#3F8F6B"),
+    "gas": ("#1B2430", "#3F8F6B"),
+    "potash": ("#7A2E2E", "#E0A33D"),
+    "diamond": ("#1E2B45", "#7FB7D6"),
+}
+
+
+def commodity_theme(commodity: str | None) -> tuple[str, str] | None:
+    """Match a free-text commodity to a (primary, accent) theme, or None."""
+    if not commodity:
+        return None
+    text = commodity.lower()
+    for key, theme in COMMODITY_THEMES.items():
+        if key in text:
+            return theme
+    return None
+
+
+def build_palette(
+    primary: str | None,
+    accent: str | None,
+    logo_path: Path | None,
+    commodity: str | None = None,
+) -> dict:
+    """Derive the full set of palette tokens used by every template.
+
+    Color precedence: explicit brand color > color extracted from a raster
+    logo > commodity-specific theme > built-in default.
+    """
+    theme = commodity_theme(commodity)
     if not primary and logo_path is not None:
         primary = extract_brand_color(logo_path)
+    if not primary and theme:
+        primary = theme[0]
+    if not accent and theme:
+        accent = theme[1]
     primary = primary or DEFAULT_PRIMARY
     accent = accent or DEFAULT_ACCENT
     return {

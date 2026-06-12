@@ -20,7 +20,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from .captable import parse_captable, parse_text
 from .profile import ProfileError, load_profile
-from .render import DEFAULT_PAGE_SIZE, PAGE_SIZES, TEMPLATES, render_html, render_pdf
+from .render import DEFAULT_PAGE_SIZE, DEFAULT_TEMPLATE, PAGE_SIZES, TEMPLATES, render_html, render_pdf
 
 
 @lru_cache(maxsize=1)
@@ -577,7 +577,7 @@ def _save_upload(upload: UploadFile, directory: Path, stem: str) -> str | None:
 @app.post("/generate")
 def generate(
     profile: str = Form(...),
-    template: str = Form("boardroom"),
+    template: str = Form(DEFAULT_TEMPLATE),
     page_size: str = Form(DEFAULT_PAGE_SIZE),
     logo: UploadFile | None = File(None),
     hero: UploadFile | None = File(None),

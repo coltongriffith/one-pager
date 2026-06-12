@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+{{ font_faces }}
+{% set compact = page.css == 'Letter' %}
+{% set flagship = projects[0] if projects else None %}
+{% set reasons = why_now if why_now else (highlights | map(attribute='title') | list) %}
+
+@page { size: {{ page.css }}; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: 'Inter', sans-serif; color: {{ palette.ink }}; font-size: 9pt; line-height: 1.5; }
+.page { width: {{ page.width }}; height: {{ page.height }}; display: flex; background: {{ palette.paper }}; }
+
+/* ---------- sidebar ---------- */
+.sidebar {
+  width: 64mm; flex: 0 0 64mm; height: {{ page.height }};
+  background: linear-gradient(170deg, {{ palette.primary_deep }} 0%, {{ palette.primary }} 80%);
+  color: {{ palette.on_primary }};
+  padding: {{ '7mm 6.5mm 7mm' if compact else '8mm 6.5mm 8mm' }};
+  position: relative; overflow: hidden;
+}
+.logo-card { background: #fff; border-radius: 2.5mm; padding: 3.6mm; text-align: center; margin-bottom: 4mm; }
+.logo-card img { max-width: 100%; max-height: 15mm; }
+.logo-card .company-name { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 12.5pt; font-weight: 700; color: {{ palette.primary }}; }
+.chips { display: flex; flex-wrap: wrap; gap: 1.6mm; justify-content: center; margin-bottom: 5mm; }
+.chip { background: rgba(255,255,255,0.12); border: 0.3mm solid rgba(255,255,255,0.35); border-radius: 5mm; font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 8pt; font-weight: 700; padding: 1.2mm 3.4mm; }
+.sb-section { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 8pt; font-weight: 700; letter-spacing: 1.1pt; text-transform: uppercase; color: {{ palette.accent }}; margin: 0 0 2.4mm; }
+.stat { padding: {{ '1.7mm 0' if compact else '2mm 0' }}; border-bottom: 0.2mm solid rgba(255,255,255,0.16); display: flex; justify-content: space-between; align-items: baseline; }
+.stat:last-of-type { border-bottom: none; }
+.stat .s-label { font-size: 7.4pt; opacity: 0.78; }
+.stat .s-value { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 9.4pt; font-weight: 700; }
+.sb-meta { font-size: 6.6pt; opacity: 0.62; margin-top: 2.2mm; line-height: 1.4; }
+
+.sb-block { margin-top: 5mm; }
+.qr-card { background: rgba(255,255,255,0.1); border-radius: 2mm; padding: 3mm; display: flex; align-items: center; gap: 3mm; }
+.qr-card img { width: 18mm; height: 18mm; background: #fff; padding: 1mm; border-radius: 1.4mm; }
+.qr-card .cap { font-size: 7pt; line-height: 1.4; opacity: 0.9; }
+.qr-card .cap strong { display: block; font-size: 7.6pt; }
+
+.sb-contact { margin-top: 5mm; }
+.sb-contact .row { display: flex; align-items: center; gap: 2.4mm; font-size: 7.6pt; font-weight: 500; margin-bottom: 2mm; }
+.sb-contact .row svg { width: 3.6mm; height: 3.6mm; flex: 0 0 auto; color: {{ palette.accent }}; }
+
+/* ---------- main ---------- */
+.main { flex: 1; min-width: 0; height: {{ page.height }}; padding: {{ '7mm 9mm 6mm' if compact else '9mm 10mm 7mm' }}; position: relative; overflow: hidden; }
+.eyebrow { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 8.6pt; font-weight: 700; letter-spacing: 1.2pt; text-transform: uppercase; color: {{ palette.accent_dark }}; margin-bottom: 2mm; }
+h1.headline { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: {{ '19pt' if compact else '21pt' }}; font-weight: 700; line-height: 1.1; color: {{ palette.ink }}; letter-spacing: -0.4pt; margin-bottom: 2.6mm; }
+.lede { font-size: 9.2pt; line-height: 1.5; color: {{ palette.muted }}; margin-bottom: 4mm; }
+.lede strong { color: {{ palette.ink }}; }
+
+h2.m-section { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 11pt; font-weight: 700; color: {{ palette.primary }}; text-transform: uppercase; letter-spacing: 0.5pt; margin-bottom: 2.6mm; padding-bottom: 1.2mm; border-bottom: 0.6mm solid {{ palette.accent }}; }
+
+/* why now */
+.why-now { margin-bottom: {{ '4mm' if compact else '5mm' }}; }
+.reason { display: flex; gap: 2.6mm; font-size: 9pt; margin-bottom: 1.8mm; align-items: flex-start; }
+.reason .check { flex: 0 0 auto; width: 4.6mm; height: 4.6mm; border-radius: 50%; background: {{ palette.accent }}; color: {{ palette.on_accent }}; display: flex; align-items: center; justify-content: center; }
+.reason .check svg { width: 3mm; height: 3mm; }
+.reason span { line-height: 1.35; }
+
+/* catalyst timeline */
+.timeline { margin-bottom: {{ '4mm' if compact else '5mm' }}; }
+.tl-item { position: relative; padding-left: 9mm; padding-bottom: {{ '2.6mm' if compact else '3.2mm' }}; }
+.tl-item::before { content: ''; position: absolute; left: 2.6mm; top: 3.2mm; bottom: -1mm; width: 0.5mm; background: {{ palette.line }}; }
+.tl-item:last-child::before { display: none; }
+.tl-item .dot { position: absolute; left: 0.8mm; top: 1mm; width: 4mm; height: 4mm; border-radius: 50%; background: {{ palette.primary }}; border: 0.8mm solid {{ palette.accent }}; }
+.tl-item .when { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 9pt; font-weight: 700; color: {{ palette.primary }}; }
+.tl-item .what { font-size: 8.6pt; color: {{ palette.ink }}; line-height: 1.35; }
+
+.flag-strip { display: table; table-layout: fixed; width: 100%; margin-bottom: {{ '4mm' if compact else '5mm' }}; }
+.flag-img-cell { display: table-cell; width: 42%; vertical-align: top; padding-right: 5mm; }
+.flag-img-cell img { width: 100%; height: {{ '30mm' if compact else '34mm' }}; object-fit: cover; border-radius: 2mm; }
+.flag-info-cell { display: table-cell; vertical-align: top; }
+.flag-info-cell h4 { font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: 10pt; font-weight: 700; color: {{ palette.primary }}; }
+.flag-info-cell .loc { font-size: 7.6pt; color: {{ palette.muted }}; margin-bottom: 1.2mm; }
+.flag-info-cell p { font-size: 8.4pt; line-height: 1.4; }
+
+.member { display: inline-block; vertical-align: top; width: 48%; font-size: 8pt; margin-bottom: 1.6mm; }
+.member .m-name { font-weight: 700; color: {{ palette.ink }}; }
+.member .m-title { color: {{ palette.muted }}; font-size: 7.4pt; }
+.member .m-note { display: block; color: {{ palette.muted }}; font-size: 7pt; font-style: italic; }
+
+.m-footer { position: absolute; left: {{ '9mm' if compact else '10mm' }}; right: {{ '9mm' if compact else '10mm' }}; bottom: 5mm; border-top: 0.3mm solid {{ palette.line }}; padding-top: 2.2mm; font-size: 6pt; color: {{ palette.muted }}; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="sidebar">
+    <div class="logo-card">
+      {% if company.logo %}<img src="{{ company.logo }}">{% else %}<div class="company-name">{{ company.name }}</div>{% endif %}
+    </div>
+    {% if listings %}
+    <div class="chips">
+      {% for listing in listings %}<span class="chip">{{ listing.exchange }}: {{ listing.ticker }}</span>{% endfor %}
+    </div>
+    {% endif %}
+
+    {% if priority_share_rows %}
+    <div class="sb-section">Capital Structure</div>
+    {% for row in priority_share_rows %}
+    <div class="stat"><span class="s-label">{{ row.label }}</span><span class="s-value">{{ row.value }}</span></div>
+    {% endfor %}
+    {% if market_meta.currency or market_meta.as_of or market_meta.source %}
+    <div class="sb-meta">{% if market_meta.currency %}{{ market_meta.currency }}. {% endif %}{% if market_meta.as_of %}As of {{ market_meta.as_of }}. {% endif %}{% if market_meta.source %}Source: {{ market_meta.source }}.{% endif %}</div>
+    {% endif %}
+    {% endif %}
+
+    {% if company.qr %}
+    <div class="sb-block">
+      <div class="qr-card">
+        <img src="{{ company.qr }}">
+        <div class="cap"><strong>Scan for the deck</strong>{{ company.qr_url }}</div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="sb-contact">
+      {% if company.phone %}<div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>{{ company.phone }}</div>{% endif %}
+      {% if company.email %}<div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>{{ company.email }}</div>{% endif %}
+      {% if company.website %}<div class="row">{{ 'globe'|icon }}{{ company.website }}</div>{% endif %}
+      {% if company.address %}<div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.8-7-11a7 7 0 0 1 14 0c0 5.2-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>{{ company.address }}</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="main">
+    {% if company.subhead %}<div class="eyebrow">{{ company.subhead }}</div>{% endif %}
+    {% if company.tagline %}<h1 class="headline">{{ company.tagline }}</h1>{% endif %}
+    {% if company.description %}<div class="lede"><strong>{{ company.name }}</strong> {{ company.description }}</div>{% endif %}
+
+    {% if reasons %}
+    <h2 class="m-section">Why Now</h2>
+    <div class="why-now">
+      {% for reason in reasons[:5] %}
+      <div class="reason"><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span><span>{{ reason }}</span></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if catalysts %}
+    <h2 class="m-section">Upcoming Catalysts</h2>
+    <div class="timeline">
+      {% for c in catalysts[:5] %}
+      <div class="tl-item"><span class="dot"></span><span class="when">{{ c.timing }}</span> &mdash; <span class="what">{{ c.catalyst }}</span></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if flagship %}
+    <div class="flag-strip">
+      {% if flagship.image %}<div class="flag-img-cell"><img src="{{ flagship.image }}"></div>{% endif %}
+      <div class="flag-info-cell">
+        <h4>{{ flagship.name }}</h4>
+        {% if flagship.location %}<div class="loc">{{ flagship.location }}</div>{% endif %}
+        {% if flagship.key_point %}<p>{{ flagship.key_point }}</p>{% elif flagship.summary %}<p>{{ flagship.summary }}</p>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if team %}
+    <h2 class="m-section">Leadership</h2>
+    <div class="team-row">
+      {% for member in team %}
+      <div class="member"><span class="m-name">{{ member.name }}</span> &mdash; <span class="m-title">{{ member.title }}</span>{% if member.note %}<span class="m-note">{{ member.note }}</span>{% endif %}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="m-footer">{{ disclaimer }}</div>
+  </div>
+
+</div>
+</body>
+</html>
