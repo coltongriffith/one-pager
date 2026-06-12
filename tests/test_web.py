@@ -52,6 +52,21 @@ def test_generate_with_logo_upload():
     assert res.content.startswith(b"%PDF")
 
 
+def test_parse_captable_text():
+    res = client.post("/parse-captable", data={"text": "Shares Outstanding\t92,450,000"})
+    assert res.status_code == 200
+    assert res.json()["shares_outstanding"] == 92450000
+
+
+def test_parse_captable_rejects_bad_format():
+    res = client.post(
+        "/parse-captable",
+        files={"file": ("cap.exe", b"MZ", "application/octet-stream")},
+    )
+    assert res.status_code == 400
+    assert client.post("/parse-captable", data={"text": ""}).status_code == 400
+
+
 def test_generate_rejects_bad_input():
     assert client.post("/generate", data={"profile": "{bad", "template": "summit"}).status_code == 400
     assert client.post("/generate", data={"profile": "{}", "template": "nope"}).status_code == 400

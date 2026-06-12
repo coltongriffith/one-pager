@@ -55,9 +55,24 @@ pip install -e ".[web]"
 onepager serve              # → http://localhost:8000
 ```
 
-The web UI lets you paste/edit the profile JSON (with one-click example loading),
-upload a logo and hero image, pick a template, and preview/download the generated
-PDF — no command line needed after startup.
+The web UI is a guided, single-page builder — no JSON required:
+
+1. **Who is the company?** Name, tickers, a 2–4 sentence description (copy it from
+   the company's About page or latest press release), and contact details.
+2. **What does the brand look like?** Upload the logo and an optional hero image;
+   brand colors are auto-extracted from raster logos or set explicitly.
+3. **What's the share structure?** Upload the latest cap table as **Excel, CSV, or
+   PDF — or just paste the rows as text** — and the parser fills in share price,
+   shares outstanding, options, warrants, market cap, etc. Every parsed value lands
+   in an editable field for review; fully diluted and market cap are computed when
+   left blank.
+4. **Why should investors care?** Highlights, projects, leadership, and news as
+   simple one-line entries.
+5. Pick a template, generate, preview in the page, download the PDF.
+
+One-click example loading fills the whole form, and a **JSON (advanced)** tab gives
+full programmatic control over the profile (including a "copy form into JSON"
+button).
 
 ## Deployment
 
