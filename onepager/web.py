@@ -111,7 +111,7 @@ PAGE = """<!DOCTYPE html>
   .generate:hover { background: var(--primary-deep); }
   .generate:disabled { opacity: 0.6; cursor: wait; }
   #error { color: #B3261E; font-size: 13px; margin-top: 10px; white-space: pre-wrap; display: none; }
-  #preview { flex: 1; min-height: 690px; border: 1px solid var(--line); border-radius: 8px; width: 100%; background: #fff; }
+  #preview { flex: 1; height: calc(100vh - 150px); min-height: 720px; border: 1px solid var(--line); border-radius: 8px; width: 100%; background: #fff; }
   .hint { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
   .dl { margin-top: 10px; font-size: 13px; display: none; }
   .dl a { color: var(--primary); font-weight: 600; }
@@ -242,7 +242,11 @@ PAGE = """<!DOCTYPE html>
 
     <button class="generate" id="go" onclick="generate()">Generate PDF</button>
     <div id="error"></div>
-    <div class="dl" id="dl"><a id="dl-link" download="onepager.pdf" href="#">&#8595; Download PDF</a></div>
+    <div class="dl" id="dl">
+      <a id="dl-link" download="onepager.pdf" href="#">&#8595; Download PDF</a>
+      &nbsp;&middot;&nbsp;
+      <a id="open-link" href="#" target="_blank" rel="noopener">Open full size &#8599;</a>
+    </div>
   </div>
 
   <div class="pane right">
@@ -465,8 +469,10 @@ async function generate() {
       blob = await printRes.blob();
     }
     const url = URL.createObjectURL(blob);
-    document.getElementById('preview').src = url;
+    // zoom the embedded viewer to the pane width (PDF open parameters)
+    document.getElementById('preview').src = url + '#zoom=page-width&navpanes=0&toolbar=0';
     document.getElementById('dl-link').href = url;
+    document.getElementById('open-link').href = url;
     document.getElementById('dl').style.display = 'block';
   } catch (e) {
     err.textContent = e.message;
