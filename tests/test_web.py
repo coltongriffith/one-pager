@@ -52,6 +52,15 @@ def test_generate_with_logo_upload():
     assert res.content.startswith(b"%PDF")
 
 
+def test_validate_endpoint():
+    res = client.post("/validate", data={"profile": '{"company": {"name": "Sparse Co."}}'})
+    assert res.status_code == 200
+    body = res.json()
+    assert isinstance(body["warnings"], list) and body["warnings"]
+    # malformed JSON yields an empty (non-crashing) result
+    assert client.post("/validate", data={"profile": "{bad"}).json()["warnings"] == []
+
+
 def test_parse_captable_text():
     res = client.post("/parse-captable", data={"text": "Shares Outstanding\t92,450,000"})
     assert res.status_code == 200

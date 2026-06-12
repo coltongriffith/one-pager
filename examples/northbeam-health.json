@@ -2,9 +2,13 @@
   "company": {
     "name": "Northbeam Health Technologies Inc.",
     "tagline": "AI-Driven Diagnostics, Delivered at Scale",
-    "description": "is a NASDAQ-listed digital health company commercializing an FDA-cleared AI imaging platform that helps radiologists detect cardiovascular and oncological conditions earlier. The platform is deployed across 240+ hospital networks with a recurring SaaS revenue model and 94% net revenue retention.",
+    "description": "is a NASDAQ-listed digital health company whose FDA-cleared AI imaging platform helps radiologists detect cardiovascular and oncological conditions earlier — deployed across 240+ hospital networks with $112M ARR growing 41% and 94% net revenue retention.",
     "sector": "Healthcare Technology",
+    "commodity": "AI medical imaging",
+    "jurisdiction": "United States",
+    "stage": "Commercial / scaling",
     "website": "www.northbeamhealth.com",
+    "deck_url": "www.northbeamhealth.com/investors",
     "email": "investors@northbeamhealth.com",
     "phone": "+1 (617) 555-0192",
     "address": "Boston, MA, USA",
@@ -13,18 +17,36 @@
   "listings": [
     { "exchange": "NASDAQ", "ticker": "NBHT" }
   ],
+  "key_metrics": [
+    { "label": "ARR", "value": "$112M" },
+    { "label": "Revenue Growth", "value": "+41% YoY" },
+    { "label": "Net Revenue Retention", "value": "94%" }
+  ],
   "share_structure": {
-    "as_of": "Q1 2026",
+    "as_of": "March 31, 2026",
+    "currency": "USD",
+    "source": "Company filings / SEC",
     "share_price": 14.20,
     "shares_outstanding": 38600000,
     "options": 2900000,
     "week52_range": "$8.45 – $16.90",
     "cash_position": 86000000,
+    "debt": 0,
     "extra": [
-      { "label": "ARR", "value": "$112M" },
-      { "label": "Revenue Growth (YoY)", "value": "+41%" }
+      { "label": "ARR", "value": "$112M" }
     ]
   },
+  "catalysts": [
+    { "timing": "Q3 2026", "catalyst": "OncoBeam FDA submission for lung & breast screening" },
+    { "timing": "Q4 2026", "catalyst": "European reimbursement decision (Germany)" },
+    { "timing": "FY 2027", "catalyst": "Targeted path to GAAP profitability" }
+  ],
+  "why_now": [
+    "$112M ARR compounding at 41% with 94% net revenue retention",
+    "Seven FDA clearances build a widening regulatory moat",
+    "Embedded in the three largest PACS vendors (70% of US imaging volume)",
+    "$86M cash, no debt — funded to profitability targeted in FY2027"
+  ],
   "highlights": [
     {
       "icon": "growth",

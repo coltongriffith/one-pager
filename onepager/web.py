@@ -111,6 +111,11 @@ PAGE = """<!DOCTYPE html>
   .generate:hover { background: var(--primary-deep); }
   .generate:disabled { opacity: 0.6; cursor: wait; }
   #error { color: #B3261E; font-size: 13px; margin-top: 10px; white-space: pre-wrap; display: none; }
+  #warnings { margin-top: 12px; display: none; }
+  #warnings h4 { font-size: 12px; color: #8A5B12; margin-bottom: 6px; }
+  #warnings ul { margin: 0; padding-left: 18px; }
+  #warnings li { font-size: 12px; color: #6B5414; line-height: 1.5; }
+  #warnings .ok { color: #146C2E; font-size: 12px; }
   #preview { flex: 1; height: calc(100vh - 150px); min-height: 720px; border: 1px solid var(--line); border-radius: 8px; width: 100%; background: #fff; }
   .hint { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
   .dl { margin-top: 10px; font-size: 13px; display: none; }
@@ -160,6 +165,10 @@ PAGE = """<!DOCTYPE html>
         <div><label class="small">One-line pitch / tagline <small>— the headline of the page</small></label><input type="text" id="c_tagline" placeholder="Powering the Battery Supply Chain of Tomorrow"></div>
         <div><label class="small">Sector / industry</label><input type="text" id="c_sector" placeholder="Lithium Exploration & Development"></div>
       </div>
+      <div class="grid2">
+        <div><label class="small">Commodity / focus <small>— drives the subhead &amp; color theme</small></label><input type="text" id="c_commodity" placeholder="Lithium brine exploration"></div>
+        <div><label class="small">Jurisdiction <small>— where the assets are</small></label><input type="text" id="c_jurisdiction" placeholder="Argentina & Chile"></div>
+      </div>
       <label class="small" style="margin-top:14px">How do investors reach them? <small>— from the “Contact”
       block at the bottom of any press release</small></label>
       <div class="grid2">
@@ -170,11 +179,22 @@ PAGE = """<!DOCTYPE html>
         <div><label class="small">Phone</label><input type="text" id="c_phone" placeholder="+1 (604) 555-0148"></div>
         <div><label class="small">Head office</label><input type="text" id="c_address" placeholder="Vancouver, BC, Canada"></div>
       </div>
+      <div class="grid2">
+        <div><label class="small">Deck / QR link <small>— becomes a scannable QR code; defaults to the website</small></label><input type="text" id="c_deck" placeholder="www.example.com/investors/presentation"></div>
+        <div></div>
+      </div>
+
+      <h2 style="margin-top:18px">Key metrics strip <small>— the 3 numbers near the top; auto-filled if left blank</small></h2>
+      <div class="grid3">
+        <div><label class="small">Metric 1 label / value</label><input type="text" id="k1l" placeholder="Land Position"><input type="text" id="k1v" placeholder="48,000 ha" style="margin-top:6px"></div>
+        <div><label class="small">Metric 2 label / value</label><input type="text" id="k2l" placeholder="Treasury"><input type="text" id="k2v" placeholder="$11.4M" style="margin-top:6px"></div>
+        <div><label class="small">Metric 3 label / value</label><input type="text" id="k3l" placeholder="Next Catalyst"><input type="text" id="k3v" placeholder="Q3 2026" style="margin-top:6px"></div>
+      </div>
 
       <h2>2 · What does the brand look like?</h2>
       <div class="grid2">
         <div><label class="small">Logo (SVG / PNG / JPG)</label><input type="file" id="logo" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
-        <div><label class="small">Hero image <small>— optional banner photo (used by the horizon template)</small></label><input type="file" id="hero" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
+        <div><label class="small">Hero image <small>— optional banner photo (used as the page banner / hero)</small></label><input type="file" id="hero" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
       </div>
       <div class="grid2">
         <div><label class="small">Project / product photo #1 <small>— shown with your first project</small></label><input type="file" id="photo1" accept=".svg,.png,.jpg,.jpeg,.webp"></div>
@@ -209,29 +229,39 @@ PAGE = """<!DOCTYPE html>
         <div><label class="small">Cash position</label><input type="text" id="s_cash_position"></div>
         <div><label class="small">Insider ownership</label><input type="text" id="s_insider_ownership"></div>
       </div>
-      <div class="grid3"><div><label class="small">Figures as of</label><input type="text" id="s_as_of" placeholder="May 2026"></div></div>
+      <div class="grid3">
+        <div><label class="small">Figures as of <small>— quote date</small></label><input type="text" id="s_as_of" placeholder="May 31, 2026"></div>
+        <div><label class="small">Currency</label><input type="text" id="s_currency" placeholder="CAD"></div>
+        <div><label class="small">Data source</label><input type="text" id="s_source" placeholder="Company filings / TMX"></div>
+      </div>
+      <p class="hint">Enterprise value (market cap − cash + debt) is computed automatically and shown in the sidebar.</p>
+      <div class="grid3"><div><label class="small">Debt <small>— for enterprise value</small></label><input type="text" id="s_debt" placeholder="0"></div></div>
 
       <h2>4 · Why should investors care?</h2>
-      <label class="small">3–6 investment highlights <small>— the bullet points from the investor
-      presentation's "Why invest" slide. One per line: “icon | Short title | One sentence why it matters”
-      (icons: __ICONS__)</small></label>
-      <textarea id="f_highlights" rows="4" class="mono" placeholder="battery | Critical Commodity | Lithium demand is forecast to triple by 2035.&#10;users | Proven Team | Leadership with multiple discoveries and exits."></textarea>
+      <label class="small">3–6 investment highlights <small>— include a number in each. One per line:
+      “icon | Short title | One sentence with a proof point” (icons: __ICONS__)</small></label>
+      <textarea id="f_highlights" rows="4" class="mono" placeholder="map | 48,000 ha Portfolio | Two salar projects across Argentina and Chile.&#10;dollar | $11.4M Treasury | Fully funds the drill campaign and maiden resource through 2027."></textarea>
+
+      <div class="grid2" style="margin-top:6px">
+        <div>
+          <label class="small">Why now? <small>— conference handout reasons, one per line</small></label>
+          <textarea id="f_whynow" rows="4" class="mono" placeholder="Fully funded 5,000 m drill program underway&#10;First resource estimate targeted for Q1 2027&#10;Multiple near-term catalysts"></textarea>
+        </div>
+        <div>
+          <label class="small">Upcoming catalysts <small>— “Timing | Catalyst” (default over news)</small></label>
+          <textarea id="f_catalysts" rows="4" class="mono" placeholder="Q3 2026 | Phase 1 drill results&#10;Q1 2027 | Maiden mineral resource estimate"></textarea>
+        </div>
+      </div>
 
       <details>
         <summary>Add projects, leadership &amp; recent news <small>— recommended, one entry per line</small></summary>
-        <label class="small">Key projects, assets, or products <small>— “Name | Location | One-line summary”,
-        add facts as “-” bullet lines underneath</small></label>
-        <textarea id="f_projects" rows="4" class="mono" placeholder="Salar Grande Project | Salta, Argentina | Flagship brine project covering 31,000 ha.&#10;- Historic sampling up to 540 mg/L lithium&#10;- Phase 1 drilling intersected brine over 180 m"></textarea>
-        <div class="grid2">
-          <div>
-            <label class="small">Who runs it? <small>— “Name | Title”</small></label>
-            <textarea id="f_team" rows="3" class="mono" placeholder="Elena Vásquez | President &amp; CEO"></textarea>
-          </div>
-          <div>
-            <label class="small">Latest headlines <small>— “YYYY-MM-DD | Headline”</small></label>
-            <textarea id="f_news" rows="3" class="mono" placeholder="2026-05-12 | Phase 1 drilling confirms thick brine horizons"></textarea>
-          </div>
-        </div>
+        <label class="small">Key projects / assets <small>— “Name | Location | Stage | Size | Key point”
+        (trailing fields optional), add detail as “-” bullet lines underneath</small></label>
+        <textarea id="f_projects" rows="5" class="mono" placeholder="Salar Grande Project | Salta, Argentina | Flagship / drilling | 31,000 ha | Brine aquifers over 180 m thickness&#10;- Historic sampling up to 540 mg/L lithium&#10;- Phase 1 drilling intersected brine over 180 m"></textarea>
+        <label class="small">Leadership <small>— “Name | Title | Credibility line” (the third part is optional)</small></label>
+        <textarea id="f_team" rows="3" class="mono" placeholder="Elena Vásquez | President & CEO | 20+ years in South American lithium development"></textarea>
+        <label class="small">Recent news <small>— “YYYY-MM-DD | Headline” (shown only when no catalysts)</small></label>
+        <textarea id="f_news" rows="2" class="mono" placeholder="2026-05-12 | Phase 1 drilling confirms thick brine horizons"></textarea>
       </details>
     </div>
 
@@ -250,6 +280,7 @@ PAGE = """<!DOCTYPE html>
 
     <button class="generate" id="go" onclick="generate()">Generate PDF</button>
     <div id="error"></div>
+    <div id="warnings"></div>
     <div class="dl" id="dl">
       <a id="dl-link" download="onepager.pdf" href="#">&#8595; Download PDF</a>
       &nbsp;&middot;&nbsp;
@@ -298,7 +329,8 @@ function parseNumeric(text) {
 function buildProfile() {
   const profile = { company: {
     name: val('c_name'), tagline: val('c_tagline'), description: val('c_desc'),
-    sector: val('c_sector'), website: val('c_website'), email: val('c_email'),
+    sector: val('c_sector'), commodity: val('c_commodity'), jurisdiction: val('c_jurisdiction'),
+    website: val('c_website'), deck_url: val('c_deck'), email: val('c_email'),
     phone: val('c_phone'), address: val('c_address'),
   }};
   const listings = val('c_tickers').split(/[,;\\n]/).map(t => t.trim()).filter(Boolean).map(t => {
@@ -307,12 +339,18 @@ function buildProfile() {
   });
   if (listings.length) profile.listings = listings;
 
+  const metrics = [['k1l','k1v'],['k2l','k2v'],['k3l','k3v']]
+    .filter(([l, v]) => val(l) || val(v))
+    .map(([l, v]) => ({ label: val(l), value: val(v) }));
+  if (metrics.length) profile.key_metrics = metrics;
+
   const share = {};
   SHARE_KEYS.forEach(k => {
     const v = val('s_' + k);
     if (v) share[k] = ['week52_range','insider_ownership'].includes(k) ? v : parseNumeric(v);
   });
-  if (val('s_as_of')) share.as_of = val('s_as_of');
+  ['as_of','currency','source'].forEach(k => { if (val('s_' + k)) share[k] = val('s_' + k); });
+  if (val('s_debt')) share.debt = parseNumeric(val('s_debt'));
   if (Object.keys(share).length) profile.share_structure = share;
 
   const highlights = lines('f_highlights').map(l => {
@@ -323,20 +361,30 @@ function buildProfile() {
   });
   if (highlights.length) profile.highlights = highlights;
 
+  const whyNow = lines('f_whynow');
+  if (whyNow.length) profile.why_now = whyNow;
+
+  const catalysts = lines('f_catalysts').map(l => {
+    const parts = l.split('|').map(s => s.trim());
+    return { timing: parts[0], catalyst: parts.slice(1).join(' | ') };
+  });
+  if (catalysts.length) profile.catalysts = catalysts;
+
   const projects = [];
   lines('f_projects').forEach(l => {
     if (l.startsWith('-')) {
       if (projects.length) (projects[projects.length-1].bullets ||= []).push(l.replace(/^-+\\s*/, ''));
       return;
     }
-    const parts = l.split('|').map(s => s.trim());
-    projects.push({ name: parts[0], location: parts[1] || '', summary: parts.slice(2).join(' | ') });
+    const p = l.split('|').map(s => s.trim());
+    projects.push({ name: p[0], location: p[1] || '', stage: p[2] || '', size: p[3] || '',
+                    key_point: p.slice(4).join(' | '), summary: p.slice(4).join(' | ') || p.slice(2).join(' | ') });
   });
   if (projects.length) profile.projects = projects;
 
   const team = lines('f_team').map(l => {
     const parts = l.split('|').map(s => s.trim());
-    return { name: parts[0], title: parts[1] || '' };
+    return { name: parts[0], title: parts[1] || '', note: parts.slice(2).join(' | ') };
   });
   if (team.length) profile.team = team;
 
@@ -363,16 +411,25 @@ function fillForm(data) {
   clearForm();
   const c = data.company || {};
   setVal('c_name', c.name); setVal('c_tagline', c.tagline); setVal('c_desc', c.description);
-  setVal('c_sector', c.sector); setVal('c_website', c.website); setVal('c_email', c.email);
+  setVal('c_sector', c.sector); setVal('c_commodity', c.commodity); setVal('c_jurisdiction', c.jurisdiction);
+  setVal('c_website', c.website); setVal('c_deck', c.deck_url || c.qr_url); setVal('c_email', c.email);
   setVal('c_phone', c.phone); setVal('c_address', c.address);
   setVal('c_tickers', (data.listings || []).map(l => `${l.exchange}: ${l.ticker}`).join(', '));
+  const km = data.key_metrics || [];
+  [['k1l','k1v'],['k2l','k2v'],['k3l','k3v']].forEach(([l, v], i) => {
+    setVal(l, (km[i] || {}).label); setVal(v, (km[i] || {}).value);
+  });
   const share = data.share_structure || {};
   SHARE_KEYS.forEach(k => setVal('s_' + k, share[k]));
-  setVal('s_as_of', share.as_of);
+  setVal('s_as_of', share.as_of); setVal('s_currency', share.currency);
+  setVal('s_source', share.source); setVal('s_debt', share.debt);
   setVal('f_highlights', (data.highlights || []).map(h => [h.icon || 'star', h.title, h.text].join(' | ')).join('\\n'));
+  setVal('f_whynow', (data.why_now || []).join('\\n'));
+  setVal('f_catalysts', (data.catalysts || []).map(c => `${c.timing} | ${c.catalyst}`).join('\\n'));
   setVal('f_projects', (data.projects || []).flatMap(p =>
-    [[p.name, p.location || '', p.summary || ''].join(' | '), ...(p.bullets || []).map(b => '- ' + b)]).join('\\n'));
-  setVal('f_team', (data.team || []).map(m => `${m.name} | ${m.title}`).join('\\n'));
+    [[p.name, p.location || '', p.stage || '', p.size || '', p.key_point || p.summary || ''].join(' | '),
+     ...(p.bullets || []).map(b => '- ' + b)]).join('\\n'));
+  setVal('f_team', (data.team || []).map(m => [m.name, m.title, m.note || m.bio || ''].join(' | ')).join('\\n'));
   setVal('f_news', (data.news || []).map(n => `${n.date} | ${n.title}`).join('\\n'));
   setVal('b_primary', (data.brand || {}).primary); setVal('b_accent', (data.brand || {}).accent);
   if (data.projects || data.team || data.news) document.querySelector('details').open = true;
@@ -412,7 +469,7 @@ async function parseCaptable() {
     return;
   }
   let filled = 0;
-  SHARE_KEYS.concat(['as_of']).forEach(k => {
+  SHARE_KEYS.concat(['as_of','currency','source']).forEach(k => {
     if (data[k] != null) { setVal('s_' + k, data[k]); filled++; }
   });
   const skipped = (data._unmatched || []).map(u => u.label);
@@ -425,6 +482,23 @@ async function parseCaptable() {
 }
 
 document.getElementById('cap_file').addEventListener('change', () => parseCaptable());
+
+async function showWarnings(profileText) {
+  const box = document.getElementById('warnings');
+  try {
+    const form = new FormData();
+    form.append('profile', profileText);
+    const res = await fetch('/validate', { method: 'POST', body: form });
+    const { warnings } = await res.json();
+    if (!warnings || !warnings.length) {
+      box.innerHTML = '<div class="ok">&#10003; Looks complete — no review notes.</div>';
+    } else {
+      box.innerHTML = '<h4>Review notes (' + warnings.length + ') — the PDF still generated:</h4><ul>'
+        + warnings.map(w => '<li>' + w.replace(/</g, '&lt;') + '</li>').join('') + '</ul>';
+    }
+    box.style.display = 'block';
+  } catch (e) { box.style.display = 'none'; }
+}
 
 async function generate() {
   const btn = document.getElementById('go');
@@ -487,6 +561,7 @@ async function generate() {
     document.getElementById('dl-link').href = url;
     document.getElementById('open-link').href = url;
     document.getElementById('dl').style.display = 'block';
+    showWarnings(profileText);
   } catch (e) {
     err.textContent = e.message;
     err.style.display = 'block';
@@ -508,6 +583,21 @@ def index() -> str:
     templates = json.dumps([[name, TEMPLATES[name]] for name in sorted(TEMPLATES)])
     return PAGE.replace("__TEMPLATES__", templates).replace(
         "__ICONS__", ", ".join(available_icons())
+    )
+
+
+@app.post("/validate")
+def validate_endpoint(profile: str = Form(...)) -> JSONResponse:
+    from .validate import recommend_template, validate_profile
+
+    try:
+        data = json.loads(profile)
+    except json.JSONDecodeError:
+        return JSONResponse({"warnings": [], "recommended": None})
+    if not isinstance(data, dict):
+        return JSONResponse({"warnings": [], "recommended": None})
+    return JSONResponse(
+        {"warnings": validate_profile(data), "recommended": recommend_template(data)}
     )
 
 

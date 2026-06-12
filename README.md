@@ -1,14 +1,19 @@
 # onepager
 
-Generate beautifully designed, investor-ready **one-pager PDFs** for publicly listed
-companies from a single JSON profile. Feed it the information you'd pull from public
-sources — description, tickers, share structure, projects, highlights, logo, images —
-and it renders a polished A4 PDF using one of three built-in templates.
+Turn public company information into a **conference-ready investor one-pager PDF**.
+Feed it a description, tickers, the latest cap table, projects, and a logo — it
+computes the capital-markets math (enterprise value, market cap), builds a 3-metric
+headline strip, generates a scannable QR code, applies a commodity-aware color theme,
+and renders a polished US-Letter or A4 page in one of three purpose-built templates.
 
-| `boardroom` | `horizon` | `summit` |
+| `factsheet` | `asset` | `catalyst` |
 | --- | --- | --- |
-| ![boardroom](docs/previews/boardroom.png) | ![horizon](docs/previews/horizon.png) | ![summit](docs/previews/summit.png) |
-| Structured two-column corporate layout with a dark stats panel and an investment-highlights grid. | Hero-image layout with centered branding, icon feature cards, and a share-information table. | Modern full-height brand sidebar with large display type and stacked key statistics. |
+| ![factsheet](docs/previews/factsheet.png) | ![asset](docs/previews/asset.png) | ![catalyst](docs/previews/catalyst.png) |
+| **Corporate snapshot / investor factsheet.** Logo, ticker, commodity & jurisdiction, a 3-metric strip, hero visual, capital-markets sidebar (with enterprise value + QR), evidence-based highlights, projects, leadership, and upcoming catalysts. | **Project / asset-focused.** Leads with the flagship asset and a large visual, a comparable-projects table (location / size / stage / key point), flagship stat chips and results. | **Catalyst / conference handout.** Tight headline, a "Why Now" checklist, an upcoming-catalyst timeline, capital structure, leadership, and a scannable QR code. |
+
+Pick the template by company stage: early-exploration and producers suit `factsheet`,
+a drill discovery or single flagship suits `asset`, and active conference / financing
+outreach suits `catalyst`.
 
 ## Installation
 
@@ -30,13 +35,13 @@ pip install -r requirements.txt
 onepager init my-company.json
 
 # Render with one template
-onepager build my-company.json --template summit -o my-company.pdf
+onepager build my-company.json --template factsheet -o my-company.pdf
 
 # Render all three templates at once
 onepager build my-company.json --all -o output/
 
 # Pick a print size: US Letter (default) or A4
-onepager build my-company.json -t summit --page-size a4
+onepager build my-company.json -t catalyst --page-size a4
 
 # List templates and available highlight icons
 onepager templates --icons
@@ -114,60 +119,88 @@ Everything an investor needs lives in one file. All sections are optional except
 {
   "company": {
     "name": "Aurora Lithium Corp.",
-    "tagline": "Powering the Battery Supply Chain of Tomorrow",
-    "description": "is a TSX Venture listed exploration company ...", // continues the company name
+    "tagline": "Powering the Battery Supply Chain of Tomorrow", // the headline
+    "commodity": "Lithium brine exploration",  // subhead + commodity color theme
+    "jurisdiction": "Argentina & Chile",        // subhead
+    "stage": "Drill-stage exploration",         // drives template recommendation
+    "description": "is advancing lithium brine projects ...", // continues the name
     "sector": "Lithium Exploration & Development",
     "website": "www.auroralithium.com",
+    "deck_url": "www.auroralithium.com/investors", // becomes the QR code; defaults to website
     "email": "ir@auroralithium.com",
     "phone": "+1 (604) 555-0148",
     "address": "Vancouver, BC, Canada",
     "logo": "assets/logo.svg",        // path relative to this JSON; SVG/PNG/JPG
-    "hero_image": "assets/hero.svg"   // used by the horizon template
+    "hero_image": "assets/hero.svg"   // hero / banner visual
   },
   "listings": [
     { "exchange": "TSXV", "ticker": "AUL" },
     { "exchange": "OTCQB", "ticker": "AULCF" }
   ],
+  "key_metrics": [                    // the 3-metric headline strip; auto-derived if omitted
+    { "label": "Land Position", "value": "48,000 ha" },
+    { "label": "Treasury", "value": "$11.4M" },
+    { "label": "Next Catalyst", "value": "Phase 1 results · Q3 2026" }
+  ],
   "share_structure": {
-    "as_of": "May 2026",
+    "as_of": "May 31, 2026",          // quote date
+    "currency": "CAD",                // shown with the market data
+    "source": "Company filings / TMX",
     "share_price": 0.62,              // numbers are auto-formatted ($, commas, $57.3M)
     "shares_outstanding": 92450000,
     "options": 6150000,
     "warrants": 14200000,
-    "fully_diluted": null,            // omit → computed from the three fields above
+    "debt": 0,
+    "fully_diluted": null,            // omit → computed from shares + options + warrants
     "market_cap": null,               // omit → computed from price × shares outstanding
+    "enterprise_value": null,         // omit → computed as market cap − cash + debt
     "week52_range": "$0.31 – $0.88",
     "cash_position": 11400000,
-    "insider_ownership": "21%",
-    "extra": [                        // any additional rows
-      { "label": "ARR", "value": "$112M" }
-    ]
+    "insider_ownership": "21%"
   },
-  "highlights": [                     // the "why invest" story
-    { "icon": "battery", "title": "Critical Commodity", "text": "Lithium demand ..." }
+  "highlights": [                     // the "why invest" story — include a number in each
+    { "icon": "map", "title": "48,000 ha Portfolio", "text": "Two salar projects ..." }
+  ],
+  "catalysts": [                      // upcoming catalysts (default over news)
+    { "timing": "Q3 2026", "catalyst": "Phase 1 drill results at Salar Grande" }
+  ],
+  "why_now": [                        // conference handout reasons (catalyst template)
+    "Fully funded 5,000 m drill program underway"
   ],
   "projects": [                       // assets, properties, or business units
     {
       "name": "Salar Grande Project",
       "location": "Salta Province, Argentina",
+      "size": "31,000 ha", "stage": "Flagship / drilling", "ownership": "100%",
+      "key_point": "Brine aquifers over 180 m thickness",   // the asset table's last column
       "summary": "Flagship brine project covering 31,000 ha ...",
       "bullets": ["Historic sampling up to 540 mg/L lithium", "..."],
       "image": "assets/map.svg"
     }
   ],
-  "team": [ { "name": "Elena Vásquez", "title": "President & CEO" } ],
+  "team": [ { "name": "Elena Vásquez", "title": "President & CEO",
+             "note": "20+ years in South American lithium development" } ],
   "news": [ { "date": "2026-05-12", "title": "Phase 1 drilling confirms ..." } ],
   "brand": { "primary": "#0E7C66", "accent": "#E8A33D" },
   "disclaimer": "Optional custom disclaimer text."
 }
 ```
 
-### Brand colors
+### Computed automatically
 
-If `brand.primary` is omitted and the logo is a raster image (PNG/JPG), the dominant
-saturated color is **extracted from the logo automatically** and the whole palette —
-backgrounds, tints, panels, tiles — is derived from it. Provide `brand.primary` /
-`brand.accent` explicitly for full control (always recommended for SVG logos).
+- **Fully diluted** = shares outstanding + options + warrants (when omitted).
+- **Market cap** = share price × shares outstanding (when omitted).
+- **Enterprise value** = market cap − cash + debt (when omitted).
+- **Key-metrics strip** is derived from treasury, market cap, and the next catalyst
+  when `key_metrics` isn't supplied.
+- **QR code** is generated from `deck_url` (or the website) as an inline SVG.
+
+### Colors
+
+Color precedence is **explicit `brand.primary` → color extracted from a raster
+logo → commodity theme → default**. Set a `commodity` (lithium, copper, gold,
+silver, uranium, rare earths, nickel, graphite, potash, …) for an on-theme default
+palette, or pass `brand.primary` / `brand.accent` for full control.
 
 ### Highlight icons
 
@@ -175,17 +208,26 @@ backgrounds, tints, panels, tiles — is derived from it. Provide `brand.primary
 battery, gear, map, drill, star, handshake, building, bolt` — set per highlight via
 the `icon` field.
 
+### Validation
+
+`onepager` flags gaps that weaken an investor handout — missing quote date,
+currency, data source, jurisdiction, catalyst, visual, or contact; a market cap that
+doesn't reconcile with price × shares; highlights with no number; and over-length
+copy. The web builder shows these as review notes after generating; they're advisory
+and never block rendering.
+
 ## Fitting on one page
 
-Output is a single page at standard print size — US Letter by default, A4 via `--page-size a4` — so companies can print copies for conferences and investor meetings. Content is curated, not paginated. Guidelines
-that render well:
+Output is a single page at standard print size — US Letter by default, A4 via
+`--page-size a4` — so companies can print copies for conferences and investor
+meetings. Content is curated, not paginated. Guidelines that render well:
 
-- **Highlights:** up to 6 (`horizon` shows the first 3 as feature cards).
-- **Projects:** 2 with bullets (`horizon` renders the first as a full card with image
-  and the rest as compact rows).
-- **News:** 2–3 items (`summit` shows 2, `boardroom`/`horizon` show up to 3).
-- **Description:** 2–4 sentences. It is rendered as a continuation of the bolded
-  company name ("**Acme Corp.** is a ...").
+- **Highlights:** up to 6 (`asset` leads with the flagship; `catalyst` turns titles
+  into "Why Now" reasons when `why_now` is absent).
+- **Projects:** 2–3 with bullets; `asset` lists them all in the comparison table.
+- **Catalysts:** up to 5 (preferred over news on every template).
+- **Description:** 2–4 sentences, rendered as a continuation of the bolded company
+  name ("**Acme Corp.** is a ...").
 
 If you supply much more than this, the page clips overflow rather than spilling onto
 a second page — trim the profile until everything shows.
@@ -194,16 +236,20 @@ a second page — trim the profile until everything shows.
 
 ```
 onepager/
-├── cli.py          # argparse CLI (build / templates / init)
-├── profile.py      # JSON loading, validation, number formatting, derived fields
-├── colors.py       # palette derivation + logo color extraction
+├── cli.py          # argparse CLI (build / templates / serve / init)
+├── web.py          # FastAPI builder UI + /generate, /parse-captable, /validate
+├── profile.py      # JSON loading, normalization, EV / derived fields
+├── captable.py     # cap-table parsing (xlsx / csv / pdf / pasted text)
+├── colors.py       # palette derivation, commodity themes, logo color extraction
+├── qr.py           # QR-code generation (segno → inline SVG)
+├── validate.py     # advisory warnings + stage→template recommendation
 ├── icons.py        # built-in inline-SVG icon set
-├── render.py       # Jinja2 + WeasyPrint rendering
+├── render.py       # Jinja2 + WeasyPrint rendering, page sizes
 ├── fonts/          # bundled Inter + Space Grotesk (OFL licensed)
 └── templates/
-    ├── boardroom/page.html
-    ├── horizon/page.html
-    └── summit/page.html
+    ├── factsheet/page.html
+    ├── asset/page.html
+    └── catalyst/page.html
 examples/           # two complete fictional sample profiles + assets
 ```
 
