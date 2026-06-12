@@ -7,11 +7,12 @@
 
 const MAX_HTML_BYTES = 6 * 1024 * 1024;
 
-function loadDeps() {
-  // the package is ESM-first: under require() its API lives on .default
-  const chromiumModule = require('@sparticuz/chromium');
+async function loadDeps() {
+  // @sparticuz/chromium is ESM-only: require() throws ERR_REQUIRE_ESM on
+  // Vercel's runtime, so load both deps with dynamic import()
+  const chromiumModule = await import('@sparticuz/chromium');
   const chromium = chromiumModule.default || chromiumModule;
-  const puppeteerModule = require('puppeteer-core');
+  const puppeteerModule = await import('puppeteer-core');
   const puppeteer = puppeteerModule.default || puppeteerModule;
   return { chromium, puppeteer };
 }
@@ -46,7 +47,7 @@ const errText = (err) => (err.stack || String(err)).split('\n').slice(0, 5).join
 module.exports = async (req, res) => {
   let deps;
   try {
-    deps = loadDeps();
+    deps = await loadDeps();
   } catch (err) {
     res.status(500).json({ error: `printer dependencies failed to load: ${errText(err)}` });
     return;
