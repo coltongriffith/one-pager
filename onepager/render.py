@@ -23,19 +23,28 @@ TEMPLATES = {
 }
 
 
-def _font_face_css() -> str:
-    faces = [
-        ("Inter", 400, "normal", "Inter-400.ttf"),
-        ("Inter", 500, "normal", "Inter-500.ttf"),
-        ("Inter", 600, "normal", "Inter-600.ttf"),
-        ("Inter", 700, "normal", "Inter-700.ttf"),
-        ("Inter", 400, "italic", "Inter-Italic-400.ttf"),
-        ("Space Grotesk", 500, "normal", "SpaceGrotesk-500.ttf"),
-        ("Space Grotesk", 700, "normal", "SpaceGrotesk-700.ttf"),
-    ]
+_FONT_FACES = [
+    ("Inter", 400, "normal", "Inter-400.ttf"),
+    ("Inter", 500, "normal", "Inter-500.ttf"),
+    ("Inter", 600, "normal", "Inter-600.ttf"),
+    ("Inter", 700, "normal", "Inter-700.ttf"),
+    ("Inter", 400, "italic", "Inter-Italic-400.ttf"),
+    ("Space Grotesk", 500, "normal", "SpaceGrotesk-500.ttf"),
+    ("Space Grotesk", 700, "normal", "SpaceGrotesk-700.ttf"),
+]
+
+
+def _font_face_css(inline: bool = False) -> str:
+    import base64
+
     rules = []
-    for family, weight, style, filename in faces:
-        url = (FONTS_DIR / filename).resolve().as_uri()
+    for family, weight, style, filename in _FONT_FACES:
+        path = FONTS_DIR / filename
+        if inline:
+            encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+            url = f"data:font/ttf;base64,{encoded}"
+        else:
+            url = path.resolve().as_uri()
         rules.append(
             f"@font-face {{ font-family: '{family}'; font-weight: {weight}; "
             f"font-style: {style}; src: url('{url}'); }}"
@@ -52,18 +61,27 @@ def _environment() -> Environment:
     return env
 
 
-def render_pdf(context: dict, template: str, output_path: str | Path) -> Path:
-    """Render `context` with the named template and write a PDF."""
+def render_html(context: dict, template: str, inline_fonts: bool = False) -> str:
+    """Render `context` with the named template to an HTML document.
+
+    With `inline_fonts=True` the bundled fonts are embedded as data URIs so the
+    document is fully self-contained (used when a remote browser prints the PDF).
+    """
     if template not in TEMPLATES:
         raise ValueError(
             f"Unknown template '{template}'. Available: {', '.join(sorted(TEMPLATES))}"
         )
+    env = _environment()
+    return env.get_template(f"{template}/page.html").render(
+        **context, font_faces=Markup(_font_face_css(inline=inline_fonts))
+    )
+
+
+def render_pdf(context: dict, template: str, output_path: str | Path) -> Path:
+    """Render `context` with the named template and write a PDF."""
     from weasyprint import HTML
 
-    env = _environment()
-    html_source = env.get_template(f"{template}/page.html").render(
-        **context, font_faces=Markup(_font_face_css())
-    )
+    html_source = render_html(context, template)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     HTML(string=html_source, base_url=str(TEMPLATES_DIR)).write_pdf(str(output_path))

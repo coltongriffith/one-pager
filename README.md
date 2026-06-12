@@ -76,20 +76,30 @@ button).
 
 ## Deployment
 
-PDF rendering uses WeasyPrint, which depends on native Pango/Cairo libraries, so the
-generator needs a real Python host — it **cannot run on static/serverless platforms
-like Vercel or GitHub Pages**. Two options are included:
+### Vercel (zero config)
 
-- **Docker** (works on Render, Railway, Fly.io, or any container host):
+Import the repo into Vercel and deploy — `vercel.json` is already set up. The app
+runs as two serverless functions:
 
-  ```bash
-  docker build -t onepager .
-  docker run -p 8000:8000 onepager
-  ```
+- `api/index.py` — the FastAPI app (builder UI, cap table parsing, templating).
+  All non-`/api` routes rewrite here, so the builder is the homepage.
+- `api/pdf.js` — a Chromium PDF printer (`@sparticuz/chromium` + `puppeteer-core`).
+  WeasyPrint's native libraries can't load in serverless Python, so `/generate`
+  detects that and returns self-contained HTML (fonts and images inlined as data
+  URIs), which the browser forwards to `/api/pdf` for printing. Output is verified
+  to match the WeasyPrint rendering.
 
-- **Static landing page** (`index.html` + `vercel.json`): if the repo is connected to
-  Vercel, the deployment serves a project landing page with template previews and
-  run instructions instead of a 404.
+Expect a few seconds of cold start on the first PDF while Chromium boots.
+
+### Docker (Render, Railway, Fly.io, or any container host)
+
+Runs the same app with the native WeasyPrint engine — single function, no
+Chromium:
+
+```bash
+docker build -t onepager .
+docker run -p 8000:8000 onepager
+```
 
 ## The profile JSON
 

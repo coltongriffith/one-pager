@@ -56,7 +56,17 @@ def fmt_money(value) -> str:
     return str(value)
 
 
-def _resolve_asset(base_dir: Path, value) -> str | None:
+_MIME_BY_SUFFIX = {
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+}
+
+
+def _resolve_asset(base_dir: Path, value, inline: bool = False) -> str | None:
     if not value:
         return None
     path = Path(value)
@@ -64,6 +74,12 @@ def _resolve_asset(base_dir: Path, value) -> str | None:
         path = base_dir / path
     if not path.exists():
         raise ProfileError(f"Asset not found: {path}")
+    if inline:
+        import base64
+
+        mime = _MIME_BY_SUFFIX.get(path.suffix.lower(), "application/octet-stream")
+        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f"data:{mime};base64,{encoded}"
     return path.resolve().as_uri()
 
 
@@ -98,8 +114,12 @@ def _autofill_share_structure(structure: dict) -> dict:
     return structure
 
 
-def load_profile(path: str | Path) -> dict:
-    """Read a profile JSON and return a normalized template context."""
+def load_profile(path: str | Path, inline_assets: bool = False) -> dict:
+    """Read a profile JSON and return a normalized template context.
+
+    With `inline_assets=True`, images become data URIs instead of file:// URLs
+    so the rendered HTML is portable (e.g. for printing in a remote browser).
+    """
     path = Path(path)
     try:
         data = json.loads(path.read_text())
@@ -128,8 +148,8 @@ def load_profile(path: str | Path) -> dict:
             "email": company.get("email", ""),
             "phone": company.get("phone", ""),
             "address": company.get("address", ""),
-            "logo": _resolve_asset(base_dir, company.get("logo")),
-            "hero_image": _resolve_asset(base_dir, company.get("hero_image")),
+            "logo": _resolve_asset(base_dir, company.get("logo"), inline_assets),
+            "hero_image": _resolve_asset(base_dir, company.get("hero_image"), inline_assets),
         },
         "listings": listings,
         "ticker_line": ticker_line,
@@ -149,7 +169,7 @@ def load_profile(path: str | Path) -> dict:
                 "location": p.get("location", ""),
                 "summary": p.get("summary", ""),
                 "bullets": p.get("bullets", []),
-                "image": _resolve_asset(base_dir, p.get("image")),
+                "image": _resolve_asset(base_dir, p.get("image"), inline_assets),
             }
             for p in data.get("projects", [])
         ],

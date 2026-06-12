@@ -10,8 +10,9 @@ Routes:
 from __future__ import annotations
 
 import json
-import shutil
+import os
 import tempfile
+from functools import lru_cache
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, UploadFile
@@ -19,7 +20,24 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from .captable import parse_captable, parse_text
 from .profile import ProfileError, load_profile
-from .render import TEMPLATES, render_pdf
+from .render import TEMPLATES, render_html, render_pdf
+
+
+@lru_cache(maxsize=1)
+def weasyprint_available() -> bool:
+    """True when the local WeasyPrint engine can run.
+
+    On serverless hosts without Pango (e.g. Vercel) this is False and
+    /generate returns self-contained HTML for a browser-based PDF printer
+    (see api/pdf.js) instead of PDF bytes.
+    """
+    if os.environ.get("ONEPAGER_DISABLE_WEASYPRINT"):
+        return False
+    try:
+        import weasyprint  # noqa: F401
+    except Exception:
+        return False
+    return True
 
 ROOT = Path(__file__).parent.parent
 EXAMPLES_DIR = ROOT / "examples"
@@ -427,7 +445,22 @@ async function generate() {
       const detail = await res.json().catch(() => ({}));
       throw new Error(detail.error || `Server error (${res.status})`);
     }
-    const blob = await res.blob();
+    let blob;
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/pdf')) {
+      blob = await res.blob();
+    } else {
+      // serverless host: print the returned HTML with the Chromium function
+      const { html } = await res.json();
+      btn.textContent = 'Printing…';
+      const printRes = await fetch('/api/pdf', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ html }),
+      });
+      if (!printRes.ok) throw new Error(`PDF printing failed (${printRes.status})`);
+      blob = await printRes.blob();
+    }
     const url = URL.createObjectURL(blob);
     document.getElementById('preview').src = url;
     document.getElementById('dl-link').href = url;
@@ -555,16 +588,22 @@ def generate(
 
         profile_path = tmp_path / "profile.json"
         profile_path.write_text(json.dumps(data))
+        use_weasyprint = weasyprint_available()
         try:
-            context = load_profile(profile_path)
-            pdf_path = render_pdf(context, template, tmp_path / "out.pdf")
+            context = load_profile(profile_path, inline_assets=not use_weasyprint)
+            if use_weasyprint:
+                pdf_path = render_pdf(context, template, tmp_path / "out.pdf")
+            else:
+                html = render_html(context, template, inline_fonts=True)
         except (ProfileError, ValueError) as exc:
             return JSONResponse({"error": str(exc)}, status_code=400)
         company_name = (company.get("name") or "onepager").strip().replace(" ", "-")
+        filename = f"{company_name}-{template}.pdf"
+        if not use_weasyprint:
+            # client forwards this HTML to the /api/pdf Chromium printer
+            return JSONResponse({"html": html, "filename": filename})
         return Response(
             content=pdf_path.read_bytes(),
             media_type="application/pdf",
-            headers={
-                "Content-Disposition": f'inline; filename="{company_name}-{template}.pdf"'
-            },
+            headers={"Content-Disposition": f'inline; filename="{filename}"'},
         )

@@ -1,0 +1,9 @@
+{
+  "name": "one-pager",
+  "private": true,
+  "description": "Dependencies for the Vercel serverless PDF printer (api/pdf.js)",
+  "dependencies": {
+    "@sparticuz/chromium": "^149.0.0",
+    "puppeteer-core": "^25.1.0"
+  }
+}

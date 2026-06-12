@@ -67,6 +67,24 @@ def test_parse_captable_rejects_bad_format():
     assert client.post("/parse-captable", data={"text": ""}).status_code == 400
 
 
+def test_generate_html_fallback(monkeypatch):
+    """Without WeasyPrint (e.g. on Vercel), /generate returns printable HTML."""
+    import onepager.web as web
+
+    monkeypatch.setenv("ONEPAGER_DISABLE_WEASYPRINT", "1")
+    web.weasyprint_available.cache_clear()
+    try:
+        profile = json.dumps({"company": {"name": "Serverless Corp."}})
+        res = client.post("/generate", data={"profile": profile, "template": "summit"})
+        assert res.status_code == 200
+        body = res.json()
+        assert body["filename"] == "Serverless-Corp.-summit.pdf"
+        assert "<!DOCTYPE html>" in body["html"]
+        assert "data:font/ttf;base64," in body["html"]
+    finally:
+        web.weasyprint_available.cache_clear()
+
+
 def test_generate_rejects_bad_input():
     assert client.post("/generate", data={"profile": "{bad", "template": "summit"}).status_code == 400
     assert client.post("/generate", data={"profile": "{}", "template": "nope"}).status_code == 400

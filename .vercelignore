@@ -1,0 +1,6 @@
+output/
+tests/
+docs/
+Dockerfile
+.gitignore
+README.md
