@@ -16,7 +16,8 @@ Requires Python 3.10+ and the WeasyPrint system libraries (Pango/Cairo — prein
 on most Linux distros, `brew install pango` on macOS).
 
 ```bash
-pip install -e .
+pip install -e .            # CLI only
+pip install -e ".[web]"     # CLI + browser UI
 # or just the dependencies:
 pip install -r requirements.txt
 ```
@@ -46,6 +47,34 @@ onepager build examples/northbeam-health.json --all -o output/
 
 (If you haven't installed the package, substitute `python3 -m onepager.cli` for
 `onepager`.)
+
+## Browser UI
+
+```bash
+pip install -e ".[web]"
+onepager serve              # → http://localhost:8000
+```
+
+The web UI lets you paste/edit the profile JSON (with one-click example loading),
+upload a logo and hero image, pick a template, and preview/download the generated
+PDF — no command line needed after startup.
+
+## Deployment
+
+PDF rendering uses WeasyPrint, which depends on native Pango/Cairo libraries, so the
+generator needs a real Python host — it **cannot run on static/serverless platforms
+like Vercel or GitHub Pages**. Two options are included:
+
+- **Docker** (works on Render, Railway, Fly.io, or any container host):
+
+  ```bash
+  docker build -t onepager .
+  docker run -p 8000:8000 onepager
+  ```
+
+- **Static landing page** (`index.html` + `vercel.json`): if the repo is connected to
+  Vercel, the deployment serves a project landing page with template previews and
+  run instructions instead of a 404.
 
 ## The profile JSON
 

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>onepager — investor one-pager PDF generator</title>
+<style>
+  :root {
+    --primary: #16365C; --primary-deep: #0D2240; --accent: #E8A33D;
+    --ink: #1B2430; --muted: #5A6572; --line: #DEE3EA; --mist: #F2F5F9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: var(--ink); background: #fff; }
+  .hero { background: linear-gradient(120deg, var(--primary-deep), var(--primary)); color: #fff; padding: 72px 24px 64px; text-align: center; }
+  .hero h1 { font-size: 44px; letter-spacing: -1px; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { max-width: 640px; margin: 16px auto 0; font-size: 18px; line-height: 1.6; opacity: 0.9; }
+  .hero .cta { margin-top: 28px; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .cta a {
+    display: inline-block; padding: 12px 22px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: 15px;
+  }
+  .cta .primary { background: var(--accent); color: #1A1A1A; }
+  .cta .ghost { border: 1.5px solid rgba(255,255,255,0.5); color: #fff; }
+  section { max-width: 1080px; margin: 0 auto; padding: 56px 24px; }
+  h2 { font-size: 26px; margin-bottom: 8px; letter-spacing: -0.4px; }
+  .sub { color: var(--muted); margin-bottom: 28px; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--mist); }
+  .card img { width: 100%; display: block; border-bottom: 1px solid var(--line); }
+  .card .body { padding: 14px 16px 16px; }
+  .card h3 { font-size: 16px; margin-bottom: 4px; }
+  .card p { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
+  .step { border-left: 4px solid var(--accent); padding: 4px 0 4px 16px; }
+  .step b { display: block; margin-bottom: 4px; }
+  .step p { font-size: 14px; color: var(--muted); line-height: 1.55; }
+  pre {
+    background: var(--primary-deep); color: #E8EEF6; border-radius: 10px;
+    padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.7;
+  }
+  pre .c { color: #7FA3C9; }
+  .note {
+    background: #FFF7E8; border: 1px solid #F0DCB0; border-radius: 10px;
+    padding: 14px 18px; font-size: 14px; color: #6B5414; line-height: 1.55; margin-top: 20px;
+  }
+  footer { border-top: 1px solid var(--line); padding: 24px; text-align: center; font-size: 13px; color: var(--muted); }
+  footer a { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>one<span>pager</span></h1>
+  <p>Turn public company information into a beautifully designed, investor-ready
+  one-pager PDF. One JSON profile in, a polished A4 document out — in your choice
+  of three templates.</p>
+  <div class="cta">
+    <a class="primary" href="https://github.com/coltongriffith/one-pager">View on GitHub</a>
+    <a class="ghost" href="#run">Run it locally</a>
+  </div>
+</div>
+
+<section>
+  <h2>Three templates</h2>
+  <p class="sub">Each rendered from the same profile — pick the personality that fits the company.</p>
+  <div class="gallery">
+    <div class="card">
+      <img src="docs/previews/boardroom.png" alt="Boardroom template preview">
+      <div class="body">
+        <h3>boardroom</h3>
+        <p>Structured two-column corporate layout with a dark stats panel and an investment-highlights grid.</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="docs/previews/horizon.png" alt="Horizon template preview">
+      <div class="body">
+        <h3>horizon</h3>
+        <p>Hero-image layout with centered branding, icon feature cards, and a share-information table.</p>
+      </div>
+    </div>
+    <div class="card">
+      <img src="docs/previews/summit.png" alt="Summit template preview">
+      <div class="body">
+        <h3>summit</h3>
+        <p>Modern full-height brand sidebar with large display type and stacked key statistics.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>How it works</h2>
+  <p class="sub">Everything an investor needs, captured once.</p>
+  <div class="steps">
+    <div class="step"><b>1 · Collect</b><p>Pull the company's public information — description, tickers, share structure, projects, highlights, team, news — into one JSON profile.</p></div>
+    <div class="step"><b>2 · Brand</b><p>Add the logo and brand colors, or let the tool extract the dominant color from the logo automatically.</p></div>
+    <div class="step"><b>3 · Generate</b><p>Render any of the three templates to a print-ready A4 PDF from the CLI or the built-in web UI.</p></div>
+  </div>
+</section>
+
+<section id="run">
+  <h2>Run it</h2>
+  <p class="sub">The PDF engine (WeasyPrint) needs a Python host, so generation runs locally or on your own server.</p>
+<pre>
+<span class="c"># install</span>
+git clone https://github.com/coltongriffith/one-pager && cd one-pager
+pip install -e ".[web]"
+
+<span class="c"># browser UI at http://localhost:8000</span>
+onepager serve
+
+<span class="c"># or straight from the command line</span>
+onepager init my-company.json
+onepager build my-company.json --all -o output/
+
+<span class="c"># or run the web UI with Docker</span>
+docker build -t onepager . && docker run -p 8000:8000 onepager
+</pre>
+  <div class="note"><b>Why isn't the generator on this page?</b> This site is a static
+  landing page. PDF rendering depends on native libraries (Pango/Cairo) that serverless
+  static hosts don't provide — deploy the Docker image to any container host
+  (Render, Railway, Fly.io, your own box) to put the web UI online.</div>
+</section>
+
+<footer>
+  Example companies shown are fictional. Built with WeasyPrint, Jinja2, Inter &amp; Space Grotesk.
+  · <a href="https://github.com/coltongriffith/one-pager">github.com/coltongriffith/one-pager</a>
+</footer>
+
+</body>
+</html>

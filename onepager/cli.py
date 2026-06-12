@@ -93,7 +93,23 @@ def main(argv: list[str] | None = None) -> int:
     init = sub.add_parser("init", help="Write a starter profile JSON to fill in")
     init.add_argument("path", help="Destination for the starter profile JSON")
 
+    serve = sub.add_parser("serve", help="Run the browser UI (requires fastapi + uvicorn)")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8000)
+
     args = parser.parse_args(argv)
+
+    if args.command == "serve":
+        try:
+            import uvicorn
+        except ImportError:
+            print(
+                "The web UI needs extra packages: pip install fastapi uvicorn python-multipart",
+                file=sys.stderr,
+            )
+            return 1
+        uvicorn.run("onepager.web:app", host=args.host, port=args.port)
+        return 0
 
     if args.command == "templates":
         for name in sorted(TEMPLATES):
